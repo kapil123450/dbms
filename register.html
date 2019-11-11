@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+                <br>
+            <form method="POST" action="/register">
+                <div class="form-group">
+                    <label for="InputEmail1">Email address</label>
+                    <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                        placeholder="Enter email" required>
+                </div>
+                <div class="form-group">
+                    <label for="Name">Name</label>
+                    <input type="name" name="Name" class="form-control" id="Name" aria-describedby="nameHelp"
+                        placeholder="Enter Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="InputDob">Date of Birth</label>
+                    <input type="date" name="DOB" class="form-control" id="InputDob" aria-describedby="info"
+                        placeholder="Enter Date of Birth" required>
+                </div>
+                <div class="form-group">
+                    <label for="InputDepartment">Departement</label>
+                    <input type="name" name="Departement" class="form-control" id="Departement" aria-describedby="info"
+                        placeholder="Enter Departement" required>
+                </div>
+                <div class="form-group">
+                    <label for="Phonenumber">Phone Number</label>
+                    <input type="tel" name="Phonenumber" class="form-control" id="phone" aria-describedby="info"
+                        placeholder="Enter Phonenumber" required>
+                </div>
+                <div class="form-group">
+                    <label for="Gender">Gender</label>
+                    <input type="gender" name="Gender" class="form-control" id="gender" aria-describedby="info"
+                        placeholder="Gender" required>
+                </div>
+                <div class="form-group">
+                    <label for="InputPassword1">Password</label>
+                    <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                </div>
+                <div class="form-group form-check">
+                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                    <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
