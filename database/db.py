@@ -10,7 +10,7 @@ class db_interface:
         try:
             print('Connecting to the PostgreSQL database...')
             self.conn= psycopg2.connect(database = "dbms",user = "postgres",password = "12345678",host = "localhost",port = 5432)
-            
+
             cur = self.conn.cursor()
             print('PostgreSQL database version:')
             cur.execute('SELECT version()')
@@ -33,6 +33,7 @@ class db_interface:
             faculty_id = cur.fetchone()[0]
             self.conn.commit()
             cur.close()
+            return faculty_id
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
     

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <br>
+
+            <h1> WELCOME !!</h1>
+            <br>
+            <h2>{{ data['name'] }}</h2>
+            <br>
+            <br>
+
+            <form method="POST" action="/setBio">
+                <h5>BIOGRAPHY</h5>
+                <textarea name = "biography" rows = "10" cols="100" {% if not data['editflag'] %} readonly {% endif %}>{{ data['biography'] }}</textarea>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+            <br>
+            <form method="POST" action="/Projects">
+                <h5>{{ "projects"}}</h5>
+                <textarea name = "projects" rows = "10" cols="100" {% if not data['editflag'] %} readonly {% endif %}>{{ data['projects'] }}</textarea>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+            <br>
+
+            <form method="POST" action="/ResearchOutput">
+                <h5>{{ "ResearchOutput"}}</h5>
+                <textarea  name = "research" rows = "10" cols="100" {% if not data['editflag'] %} readonly {% endif %}>{{ data['research'] }}</textarea>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+            <br>
+
+            <form method="POST" action="/Prizes">
+                <h5>{{ "Prizes"}}</h5>
+                <textarea name = "prizes" rows = "10" cols="100" {% if not data['editflag'] %} readonly {% endif %}>{{ data['prizes'] }}</textarea>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+            <br>
+            <br>
+            <br>
+            <br>
+            {{"Email : "}} 
+            <a href = "{{  data['email'] }}">  {{data['email'] }}</a>
+            <br>
+            <br>
+            <br>
+            <br>
+            <form action="/logout">
+                <button type="submit" class="btn btn-primary">Logout</button></form>
+
+        </div>
+            
+
+
+
+    </div>
+</div>
+
+{% endblock %}

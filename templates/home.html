@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<ol>
+    {% for users in my_LIST %}
+
+    <li>
+        <a class="btn btn-primary" href="portal/{{users._id}}">
+            {{users['name']}} {{" "}} {{ users['departement'] }} {{" "}}
+            {{users['email']}}
+        </a>
+    </li>
+
+    {% endfor %}
+</ol>
+{% endblock %}
