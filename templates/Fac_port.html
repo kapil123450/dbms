@@ -14,44 +14,58 @@
 
             <form method="POST" action="/setBio">
                 <h5>BIOGRAPHY</h5>
-                <textarea name = "biography" rows = "10" cols="100" {% if not data['editflag'] %} readonly {% endif %}>{{ data['biography'] }}</textarea>
+                <textarea name="biography" rows="10" cols="100" {% if not data['editflag'] %} readonly
+                    {% endif %}>{{ data['biography'] }}</textarea>
+                {% if data['editflag'] %}
                 <button type="submit" class="btn btn-primary">Save</button>
+                {% endif %}
             </form>
             <br>
             <form method="POST" action="/Projects">
                 <h5>{{ "projects"}}</h5>
-                <textarea name = "projects" rows = "10" cols="100" {% if not data['editflag'] %} readonly {% endif %}>{{ data['projects'] }}</textarea>
+                <textarea name="projects" rows="10" cols="100" {% if not data['editflag'] %} readonly
+                    {% endif %}>{{ data['projects'] }}</textarea>
+                {% if data['editflag'] %}
                 <button type="submit" class="btn btn-primary">Save</button>
+                {% endif %}
             </form>
             <br>
 
             <form method="POST" action="/ResearchOutput">
                 <h5>{{ "ResearchOutput"}}</h5>
-                <textarea  name = "research" rows = "10" cols="100" {% if not data['editflag'] %} readonly {% endif %}>{{ data['research'] }}</textarea>
+                <textarea name="research" rows="10" cols="100" {% if not data['editflag'] %} readonly
+                    {% endif %}>{{ data['research'] }}</textarea>
+                {% if data['editflag'] %}
                 <button type="submit" class="btn btn-primary">Save</button>
+                {% endif %}
             </form>
             <br>
 
             <form method="POST" action="/Prizes">
                 <h5>{{ "Prizes"}}</h5>
-                <textarea name = "prizes" rows = "10" cols="100" {% if not data['editflag'] %} readonly {% endif %}>{{ data['prizes'] }}</textarea>
+                <textarea name="prizes" rows="10" cols="100" {% if not data['editflag'] %} readonly
+                    {% endif %}>{{ data['prizes'] }}</textarea>
+                {% if data['editflag'] %}
                 <button type="submit" class="btn btn-primary">Save</button>
+                {% endif %}
             </form>
             <br>
             <br>
             <br>
             <br>
-            {{"Email : "}} 
-            <a href = "{{  data['email'] }}">  {{data['email'] }}</a>
+            {{"Email : "}}
+            <a href="{{  data['email'] }}"> {{data['email'] }}</a>
             <br>
             <br>
             <br>
             <br>
+            {% if data['editflag'] %}
             <form action="/logout">
                 <button type="submit" class="btn btn-primary">Logout</button></form>
+            {% endif %}
 
         </div>
-            
+
 
 
 

@@ -29,28 +29,28 @@ def setBio():
       result = request.form
       my_collection.update_one({"_id":session['_id']},{"$set":{"biography":result['biography']}})
       print(result)
-      return redirect(url_for('index'))
+      return redirect(url_for('portal'))
 @app.route('/Projects',methods = ['POST','GET'])
 def setProjects():
    if request.method == 'POST' and session.get('_id'):
       result = request.form
-      my_collection.update_one({"_id":session['_id']},{"$push":{"projects":result['projects']}})
+      my_collection.update_one({"_id":session['_id']},{"$set":{"projects":result['projects']}})
       print(result)
-      return redirect(url_for('index'))
+      return redirect(url_for('portal'))
 @app.route('/ResearchOutput',methods = ['POST','GET'])
 def setResearch():
    if request.method == 'POST' and session.get('_id'):
       result = request.form
       my_collection.update_one({"_id":session['_id']},{"$set":{"research":result['research']}})
       print(result)
-      return redirect(url_for('index'))
+      return redirect(url_for('portal'))
 @app.route('/Prizes',methods = ['POST','GET'])
 def setPrizes():
    if request.method == 'POST' and session.get('_id'):
       result = request.form
       my_collection.update_one({"_id":session['_id']},{"$set":{"prizes":result['prizes']}})
       print(result)
-      return redirect(url_for('index'))
+      return redirect(url_for('portal'))
 @app.route('/result',methods = ['POST','GET'])
 def result():
    if request.method == 'POST' and session.get('_id'):
@@ -59,9 +59,9 @@ def result():
       "name":result['name'],"skills":result['skills'],"Research_paper":result['Research_paper'],
       "Experience":result['Experience'],"Education":result['Education']}})
       print(result)
-      return redirect(url_for('index'))
+      return redirect(url_for('portal'))
    else :
-      return redirect(url_for('index'))
+      return redirect(url_for('portal'))
 @app.route('/success/<name><pwd>') 
 def success( name  , pwd ): 
    return  name +"    "+pwd
@@ -123,7 +123,7 @@ def register():
       print(user,pwd1)
       fid = psql.insert_employee([request.form['Name'],request.form['password'],request.form['Departement'],request.form['Gender'],request.form['email']])
       my_collection.insert_one({"_id":fid , "email":user ,"name":request.form['Name'],"departement":request.form['Departement']})
-      return redirect(url_for('success' , name = user , pwd = pwd1))  
+      return redirect(url_for('home'))  
     else :
       return render_template("register.html")   
 
