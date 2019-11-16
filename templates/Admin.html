@@ -3,17 +3,24 @@
 <div class="container">
     <div class="row">
         <div class="col-md-6 mx-auto">
+            <br>
             <form action="/updateLeaves" method="POST">
-                "Eneter Number of leaves"
-                <button name='leaves' type="submit" class="btn btn-primary">Set Leaves</button>
+                "Enter Number of leaves"
+                
+                <br>
+                <input type = 'number' name='leaves'>
+                <br>
+                <br>
+                <button  type="submit" class="btn btn-primary">Set Leaves</button>
             </form>
             <br>
             <br>
             <br>
-
-            <form action="/setPath">
+            <a href = "/clearPath" > clear earlier path </a>
+            <br><br>
+            <form action="/setPath" method = "POST">
                 <select name="pathmember">
-                    <option value="simple_faculty">faculty</option>
+                    
                     <option value="HOD">HOD</option>
                     <option value="A_DEAN">Associate Dean</option>
                     <option value="DEAN">Dean</option>
@@ -25,16 +32,22 @@
             <br>
             <br>
             <br>
-            <form action="/setCrossFaculty">
-                <select name="faculty_gmail">
-                    <option value="simple_faculty">faculty</option>
-                    <option value="HOD">HOD</option>
+            Select Cross Faculties and Hods
+            <form action="/setCrossFaculty" method = "POST">
+                <select name="designation">
+                    <option value="HODCSE">HODCSE</option>
+                    <option value="HODME">HODME</option>
+                    <option value="HODEE">HODEE</option>
                     <option value="A_DEAN">Associate Dean</option>
                     <option value="DEAN">Dean</option>
                     <option value="DIRECTOR">Director</option>
+                    
                 </select>
                 <br><br>
-                <input type="submit">
+                
+                <input type = "email"  name = "email" >
+                <br><br>
+                <button  type="submit" class="btn btn-primary">Save</button>
             </form>
         </div>
     </div>

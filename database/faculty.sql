@@ -1,6 +1,6 @@
 CREATE TABLE faculty
 (
-    fid SERIAL PRIMARY KEY,
+    fid INTEGER PRIMARY KEY,
     leaves_current_year INTEGER ,
     leaves_next_year INTEGER
 );
