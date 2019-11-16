@@ -117,14 +117,14 @@ def login():
 
 @app.route('/register' , methods = ['POST','GET'])
 def register():
-    if request.method == 'POST':      
+   if request.method == 'POST':      
       user = request.form['email']
       pwd1 = request.form['password']
       print(user,pwd1)
       fid = psql.insert_employee([request.form['Name'],request.form['password'],request.form['Departement'],request.form['Gender'],request.form['email']])
       my_collection.insert_one({"_id":fid , "email":user ,"name":request.form['Name'],"departement":request.form['Departement']})
       return redirect(url_for('home'))  
-    else :
+   else :
       return render_template("register.html")   
 
   

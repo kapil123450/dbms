@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <form action="/updateLeaves" method="POST">
+                "Eneter Number of leaves"
+                <button name='leaves' type="submit" class="btn btn-primary">Set Leaves</button>
+            </form>
+            <br>
+            <br>
+            <br>
+
+            <form action="/setPath">
+                <select name="pathmember">
+                    <option value="simple_faculty">faculty</option>
+                    <option value="HOD">HOD</option>
+                    <option value="A_DEAN">Associate Dean</option>
+                    <option value="DEAN">Dean</option>
+                    <option value="DIRECTOR">Director</option>
+                </select>
+                <br><br>
+                <input type="submit">
+            </form>
+            <br>
+            <br>
+            <br>
+            <form action="/setCrossFaculty">
+                <select name="faculty_gmail">
+                    <option value="simple_faculty">faculty</option>
+                    <option value="HOD">HOD</option>
+                    <option value="A_DEAN">Associate Dean</option>
+                    <option value="DEAN">Dean</option>
+                    <option value="DIRECTOR">Director</option>
+                </select>
+                <br><br>
+                <input type="submit">
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
