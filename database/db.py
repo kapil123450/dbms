@@ -375,7 +375,7 @@ class db_interface:
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
 
-    def check_path(self , emp):
+    def check_path(self ):
         try:
             cur = self.conn.cursor()
             cur.execute("""SELECT designation from Admin_path_faculty """)
@@ -394,10 +394,10 @@ class db_interface:
         try:
             cur = self.conn.cursor()
             cur.execute(sql, (emp[0],emp[1],emp[2],emp[3],emp[4],emp[5],emp[6],))
-            leave_id = cur.fetchone()[0]
+            
             self.conn.commit()
             cur.close()
-            return leave_id
+            
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
 
@@ -453,7 +453,7 @@ class db_interface:
         sql = """UPDATE current_leaves
           SET  position_level = %s,
           time_of_generation =%s 
-          where leave id = %s
+          where leave_id = %s
             """  #here i have to change %d %d with corresponding date signifier.
         try:
             cur = self.conn.cursor()
@@ -493,7 +493,7 @@ class db_interface:
     def check_reaction(self):
         try:
             cur = self.conn.cursor()
-            cur.execute("""SELECT comment ,status  from reaction """)
+            cur.execute("""SELECT comment ,status_  from reaction """)
             val = [False]
             for x in cur :
                 val = [x[0],x[1]]
@@ -507,12 +507,12 @@ class db_interface:
         fid = log[0]
         try:
             cur = self.conn.cursor()
-            cur.execute("""SELECT leaves_current_year from faculty where fid = %s """,(log[0]))
+            cur.execute("""SELECT leaves_current_year from faculty where fid = %s """,(log[0] ,))
 
             val = [False]
             for x in cur :
                 if x[0] > 0 :
-                    val = [True]
+                    val = [True,x[0]]
                     break
             cur.close()
             return val

@@ -6,7 +6,7 @@ CREATE TABLE current_leaves
     borrow INTEGER,
     fid INTEGER ,
     position_level INTEGER,
-    time_of_generation TIME,
+    time_of_generation DATE,
     FOREIGN KEY (fid) REFERENCES log_of_faculty(fid),
     FOREIGN KEY (leave_id) REFERENCES log_of_leaves(leave_id)
 );

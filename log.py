@@ -107,31 +107,38 @@ def generateLeave():
    reason = request.form['reason']
    check_leave = psql.check_for_leave_faculty([fid]) #check whteher this faculty can avail leave or not
    dep = psql.check_log_of_faculty_dep([fid])
+   print(check_leave)
    if check_leave[0] == True:
-      leave_id = psql.insert_log_of_leaves([1,reason,0,fid,date.now()]) # insert information in log_of _leave table for faculty.
+      leave_id = psql.insert_log_of_leaves([1,reason,0,fid,date.today()]) # insert information in log_of _leave table for faculty.
       list_path = psql.check_path() #check for list of path set by admin
-      psql.insert_current_leave([leave_id,1,'NULL',0,fid,0,date.now()]) #insert information about leave in current leave table
+      psql.insert_current_leave([leave_id,1,'NULL',0,fid,0,date.today()]) #insert information about leave in current leave table
       i=0
       true =0
+      print(list_path)
       for post in list_path:
          i = i+1
          true = 0
          post_level = psql.check_fixed_level([post])  #check for post level in fixel level table
          sp_id = []
-         if post in ['HODCSE','HODEE','HODME']:
+         spid = -1
+         if post in ['HOD']:
             sp_id = psql.check_In_hod([dep])
-            sp_id = sp_id[1]
+            if sp_id[0] != False:
+               spid = sp_id[1]
          else:
             sp_id = psql.check_In_dean([post])
-            sp_id = sp_id[1]
-         psql.update_current_leave([post_level,date.now(),leave_id]) #update information in current leave table
-         psql.insert_log_leave_comment([leave_id,1,'NULL',sp_id,date.now(),post_level])   #insert first into log_of _leave and comment table ,which shows that it has gone to this proff.
+            if sp_id[0] != False:
+               spid = sp_id[1]
+            
+         psql.update_current_leave([post_level,date.today(),leave_id]) #update information in current leave table
+         psql.insert_log_leave_comment([leave_id,1,'NULL',spid,date.today(),post_level])   #insert first into log_of _leave and comment table ,which shows that it has gone to this proff.
          status = psql.check_reaction()  # it return what a hod or dean has reacted on particular leav
+         print(status)
          while status[0] == False:
             status = psql.check_reaction()
          if status[0] !=False:
-            psql.upudate_log_leave_comment([status[0],status[1],date.today(),sp_id,leave_id])  #it will update status and comment of reaction of that hod or dean for that leave.
-            if status[0] == 2:
+            psql.upudate_log_leave_comment([status[0],status[1],date.today(),spid,leave_id])  #it will update status and comment of reaction of that hod or dean for that leave.
+            if status[1] == 2:
                true = 1
                continue
             else : break
