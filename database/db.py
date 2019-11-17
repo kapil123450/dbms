@@ -518,5 +518,14 @@ class db_interface:
             return val
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
+    def delete_from_current_table_of_leave(self, log):
+        fid = log[0]
+        try:
+            cur = self.conn.cursor()
+            cur.execute("""DELETE FROM current_leave where leave_id = %s """,(log[0]))
+
+            self.conn.commit()
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
 
     
