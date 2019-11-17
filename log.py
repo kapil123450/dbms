@@ -105,15 +105,16 @@ def portal(user_id):
 def getResponseAccept(  ):
    leave_id = request.form['leave_id']
    applicant_id = request.form['applicant_id']
-   print(leave_id)
-   print(applicant_id)
+   print("2 : ",leave_id)
+   print("3 : ",applicant_id)
    dep = psql.check_log_of_faculty_dep([applicant_id])
    comment = request.form['comment']
    spid = session.get('_id')
-   print("spid:",spid)
+   print("4: ",spid)
    psql.upudate_log_leave_comment([2,comment,date.today(),spid,leave_id])
    list_path = psql.check_path()
    post = psql.checkSpecialPortal(spid)
+   print("5 : " ,post)
    post_new = 0
    flag = False
    for i in range(len(list_path)):
@@ -123,6 +124,8 @@ def getResponseAccept(  ):
          else :
             post_new = list_path[i+1]
          break;
+   
+   print("6 : ",post_new)
    if flag :
       psql.delete_from_current_table_of_leave([leave_id])
       psql.decrese_current_leave_in_faculty(applicant_id)  #it is like update we have to decrese leave number
@@ -138,12 +141,14 @@ def getResponseAccept(  ):
          sp_id = psql.check_In_dean([post_new])
          if sp_id[0] != False:
             spid = sp_id[1]
+      print("7 : ",spid)
       post_level = psql.check_fixed_level([post_new])
+      print("8 : ",post_level)
       psql.update_current_leave([post_level,date.today(),leave_id])
       psql.insert_log_leave_comment([leave_id,1,'NULL',spid,date.today(),post_level]) 
-      return redirect(url_for("home"))  
+      return redirect(url_for("specialPortal"))  
 
-   return redirect(url_for("home"))
+   return redirect(url_for("specialPortal"))
 
 
 
@@ -171,7 +176,7 @@ def generateLeave():
          sp_id = psql.check_In_dean([post])
          if sp_id[0] != False:
             spid = sp_id[1]
-            
+      print("1  : ", spid)
       psql.insert_log_leave_comment([leave_id,1,'NULL',spid,date.today(),post_level]) 
    return redirect(url_for("portal"))
    """i=0
@@ -218,6 +223,7 @@ def specialPortal():
    fid = session.get('_id')
    data = {}
    lid = psql.getAllLeaveRequests(fid)
+   print(lid)
    
    data['pendingLeaveIds'] = lid['pendingLeaveIds']
    data['approvedLeaveIds'] = lid['approvedLeaveIds']

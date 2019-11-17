@@ -1,6 +1,7 @@
 CREATE TABLE log_of_leaves_comment
 (
-    leave_id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
+    leave_id INTEGER,
     status_ INTEGER,
     comment TEXT,
     fid INTEGER ,

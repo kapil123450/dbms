@@ -1,6 +1,7 @@
 CREATE TABLE current_leaves
 (
-    leave_id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
+    leave_id INTEGER,
     status_ INTEGER,
     comment TEXT,
     borrow INTEGER,

@@ -442,11 +442,12 @@ class db_interface:
             print(error)
 
     def insert_log_leave_comment(self , emp):
-        sql = """INSERT INTO log_of_leaves_comment(leave_id,status_,comment,fid,time_of_generation,position_level)
+        sql = """INSERT INTO log_of_leaves_comment(leave_id , status_ , comment , fid , time_of_generation , position_level)
                 VALUES(%s,%s,%s,%s,%s,%s) """  #here i have to change %d %d with corresponding date signifier.
         try:
             cur = self.conn.cursor()
-            cur.execute(sql, (emp[0],emp[1],emp[2],emp[3],emp[4],emp[5],))
+            cur.execute("""INSERT INTO log_of_leaves_comment(leave_id , status_ , comment , fid , time_of_generation , position_level)
+                VALUES(%s,%s,%s,%s,%s,%s) """, (emp[0],emp[1],emp[2],emp[3],emp[4],emp[5],))
             self.conn.commit()
             cur.close()
         except (Exception, psycopg2.DatabaseError) as error:
@@ -468,8 +469,8 @@ class db_interface:
 
     def update_log_of_leave(self , emp):
         sql = """UPDATE log_of_leaves
-          SET  status_ = %s,
-          time_of_generation =%s 
+          SET  status_ = %s
+          
           where leave_id = %s and fid = %s
             """  #here i have to change %d %d with corresponding date signifier.
         try:
@@ -525,7 +526,7 @@ class db_interface:
         fid = log[0]
         try:
             cur = self.conn.cursor()
-            cur.execute("""DELETE FROM current_leave where leave_id = %s """,(log[0]))
+            cur.execute("""DELETE FROM current_leaves where leave_id = %s """,(log[0] ,))
 
             self.conn.commit()
         except (Exception, psycopg2.DatabaseError) as error:
