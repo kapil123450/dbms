@@ -7,7 +7,7 @@
             <ol>
                 <h4>Pending Leave Ids</h4>
                 {% if data['pendingLeaveIds'][0] %}
-                {% for ids in data['pendingLeaveIds'] %}
+                {% for ids in data['pendingLeaveIds'][1] %}
 
                 <li>
                     <a class="btn btn-primary" href="/detailsofleaveidPending/{{ ids }}">
@@ -24,7 +24,7 @@
 
             <ol>
                 <h4>Accepted Leave Ids</h4>
-                {% if data['approvedLeaveIds'][0] %}
+                
                 {% for ids in data['approvedLeaveIds'] %}
 
                 <li>
@@ -35,12 +35,12 @@
                 <br>
 
                 {% endfor %}
-                {% endif %}
+                
             </ol>
             <br><br>
             <ol>
                 <h4>Rejected Leave Ids</h4>
-                {% if data['rejectedLeaveIds'][0] %}
+            
                 {% for ids in data['rejectedLeaveIds'] %}
 
                 <li>
@@ -51,7 +51,7 @@
                 <br>
 
                 {% endfor %}
-                {% endif %}
+                
             </ol>
         </div>
     </div>

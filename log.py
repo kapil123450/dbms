@@ -159,7 +159,7 @@ def specialPortal():
    fid = session.get('_id')
    data = {}
    lid = psql.getAllLeaveRequests(fid)
-   print(lid)
+   
    data['pendingLeaveIds'] = lid['pendingLeaveIds']
    data['approvedLeaveIds'] = lid['approvedLeaveIds']
    data['rejectedLeaveIds'] = lid['rejectedLeaveIds']
@@ -178,6 +178,20 @@ def detailsofleaveid(leave_id):
    data['applicant_id'] = leave_details_to_applicant[4]
    data['leave_details_to_verifier'] = leave_details_to_verifier
    return render_template("leaveid_details.html",data = data)
+
+@app.route('/detailsofleaveidPending/<leave_id>',methods = ['POST','GET'])
+def detailsofleaveidPending(leave_id):
+   fid = session.get('_id')
+   data = {}
+   leave_details_to_applicant = psql.getDetailsFromApplicant(leave_id)
+   leave_details_to_verifier = psql.getDetailsFromVerifiers(leave_id)
+   data['reason'] = leave_details_to_applicant[0]
+   data['status_shown_to_applicant'] = leave_details_to_applicant[1]
+   data['time_of_generation_applicant'] = leave_details_to_applicant[2]
+   data['borroe_by_applicant'] = leave_details_to_applicant[3]
+   data['applicant_id'] = leave_details_to_applicant[4]
+   data['leave_details_to_verifier'] = leave_details_to_verifier
+   return render_template("leaveid_details_pending.html",data = data)
 ##### ADMIN #####
 @app.route('/admin',methods = ['POST','GET'])
 def admin():

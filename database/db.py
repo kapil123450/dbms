@@ -255,7 +255,7 @@ class db_interface:
             print(error)
     
     def getAllLeaveRequests(self, fid):
-        sql1 = """ SELECT leave_id FROM log_of_leaves WHERE fid = %s AND status_ = 1 """
+        sql1 = """ SELECT leave_id FROM log_of_leaves_comment WHERE fid = %s AND status_ = 1 """
         sql2 = """ SELECT leave_id FROM log_of_leaves_comment WHERE fid = %s AND status_ = 2 """
         sql3 = """ SELECT leave_id FROM log_of_leaves_comment WHERE fid = %s AND status_ = 0 """
         try:
@@ -266,7 +266,7 @@ class db_interface:
             li = []
             for x in cur:
                 li.append(x[0])
-                pendingLeaveIds = li
+                pendingLeaveIds = [True,li]
             approvedLeaveIds = [False]
             li = []
             cur.execute(sql2, (fid,))
@@ -282,6 +282,7 @@ class db_interface:
             lid['pendingLeaveIds'] = pendingLeaveIds
             lid['approvedLeaveIds'] = approvedLeaveIds
             lid['rejectedLeaveIds'] = rejectedLeaveIds
+            print(lid)
             return lid 
             
         except (Exception, psycopg2.DatabaseError) as error:
@@ -296,9 +297,11 @@ class db_interface:
             cur.execute(sql, (leave_id,))
             li = []
             for x in cur:
-                li.append([x[0], x[1], x[2], x[3],x[4]])
+                print(x)
+                li =[x[0], x[1], x[2], x[3],x[4]]
                 lid = li
             cur.close()
+            print(lid)
             return lid
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)

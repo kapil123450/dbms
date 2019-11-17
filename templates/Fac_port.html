@@ -83,7 +83,7 @@
             {% else %}
             <h4> Your Pending Leave Id is :</h4>
             <br><br>
-            <a href="#">data['pendingLeaveid']</a>
+            <a href="/detailsofleaveid/{{data['pendingLeaveid']}}">{{data['pendingLeaveid']}}</a>
             <br><br>
             {% endif %}
             {% if data['specialPortal'] %}
