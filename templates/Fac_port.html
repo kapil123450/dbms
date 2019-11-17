@@ -91,6 +91,22 @@
                 click here to check and approve pending leaves
             </a>
             {% endif %}
+            {% if data['sentBackForReview'] %}
+            <br><br>
+            Check Reviews on your Leave
+            <br><br>
+            <a href="detailsofleaveid/{{data['sentBackForReviewId']}}">{{data['sentBackForReviewId']}}</a>
+            <br>
+            <form method="POST" action="/sendBackAgain">
+                <h4>{{ " Update Reason "}}</h4>
+                <br><br>
+                <textarea name="reason" rows="10" cols="100">{{data['reason']}}</textarea>
+                <input type="hidden" name="sendBackById" value="{{ data['sendBackById'] }}"/>
+                <input type="hidden" name="leave_id" value="{{ data['sentBackForReviewId'] }}"/>
+                <br><br>
+                <button type="submit" class="btn btn-primary">Send Back Again</button>
+            </form>
+            {% endif %}
             {% endif %}
 
         </div>

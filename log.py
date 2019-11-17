@@ -78,6 +78,9 @@ def portal(user_id):
    leaves = [False]
    specialPortal = [False]
    pendingLeave = [False]
+   sentBackForReview = [False]
+   sendBackById = [False]
+   reason = [False]
    if not user_id:
       editflag = True
       user_id = session.get('_id')
@@ -85,6 +88,10 @@ def portal(user_id):
          leaves = psql.getLeaves(user_id)
          specialPortal = psql.checkSpecialPortal(user_id)
          pendingLeave = psql.checkPendingLeave(user_id)
+         sentBackForReview = psql.checkSentBackLeaveId(user_id)
+         if sentBackForReview[0] != False:
+            sendBackById = psql.getsendBackById(sentBackForReview[1])
+            reason = psql.getInittialReason(sentBackForReview[1])
          print("sp:",specialPortal)
 
    if not user_id :
@@ -97,6 +104,13 @@ def portal(user_id):
    if pendingLeave[0] != False :
       data['pendingLeave'] = pendingLeave[0]
       data['pendingLeaveid'] = pendingLeave[1]
+   if sentBackForReview[0] != False:
+      data['sentBackForReview'] = sentBackForReview[0]
+      data['sentBackForReviewId'] = sentBackForReview[1]
+   if sendBackById[0] != False:
+      data['sendBackById'] = sendBackById[1]
+   if reason[0] != False:
+      data['reason'] = reason[1]
    data['specialPortal'] = specialPortal[0]
    return render_template("Fac_port.html",data = data)
 
@@ -150,6 +164,45 @@ def getResponseAccept(  ):
 
    return redirect(url_for("specialPortal"))
 
+
+@app.route('/getResponseReview', methods = ['POST','GET'])
+def getResponseReview():
+   leave_id = request.form['leave_id']
+   applicant_id = request.form['applicant_id']
+   print("2 : ",leave_id)
+   print("3 : ",applicant_id)
+   dep = psql.check_log_of_faculty_dep([applicant_id])
+   comment = request.form['comment']
+   spid = session.get('_id')
+   print("4: ",spid)
+   psql.upudate_log_leave_comment([3,comment,date.today(),spid,leave_id])
+   psql.update_log_of_leave([3,leave_id,applicant_id])
+   return redirect(url_for("specialPortal"))
+
+@app.route('/getResponseRejected', methods = ['POST','GET'])
+def getResponseRejected():
+   leave_id = request.form['leave_id']
+   applicant_id = request.form['applicant_id']
+   print("2 : ",leave_id)
+   print("3 : ",applicant_id)
+   dep = psql.check_log_of_faculty_dep([applicant_id])
+   comment = request.form['comment']
+   spid = session.get('_id')
+   print("4: ",spid)
+   psql.upudate_log_leave_comment([0,comment,date.today(),spid,leave_id])
+   psql.update_log_of_leave([0,leave_id,applicant_id])
+   psql.delete_from_current_table_of_leave([leave_id])
+   return redirect(url_for("specialPortal"))
+
+@app.route('/sendBackAgain', methods = ['POST','GET'])
+def sendBackAgain():
+   if request.method == "POST" :
+      sendBackById = request.form['sendBackById']
+      reason = request.form['reason']
+      leave_id = request.form['leave_id']
+      psql.upudate_log_leave_comment([1,'NULL',date.today(),sendBackById,leave_id])
+      psql.update_log_of_leave_status([1,reason,date.today(),leave_id])
+   return redirect(url_for("portal"))
 
 
 

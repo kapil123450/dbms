@@ -48,7 +48,7 @@ Status to applicant <br>
     <input type="hidden" name="applicant_id" value="{{ data['applicant_id']}}"/>
     <br><br>
     <button type="submit" class="btn btn-primary">Accept and Forward</button>
-    <button type="submit" class="btn btn-primary" formaction="#">Reject </button>
-    <button type="submit" class="btn btn-primary" formaction="#">Submit Back </button>
+    <button type="submit" class="btn btn-primary" method = "POST" formaction="/getResponseRejected">Reject </button>
+    <button type="submit" class="btn btn-primary"  method = "POST" formaction="/getResponseReview">Submit Back For Review </button>
 </form>
 {% endblock %}

@@ -333,6 +333,44 @@ class db_interface:
             return lid
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
+    def checkSentBackLeaveId(self, user_id):
+        sql1 = """ SELECT leave_id FROM log_of_leaves WHERE fid = %s AND status_ = 3 """
+        try:
+            cur = self.conn.cursor()
+            cur.execute(sql1, (user_id , ))
+            lid = [False]
+            for x in cur:
+                lid = [True, x[0]]
+            cur.close()
+            return lid
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+            
+    def getsendBackById(self, leave_id):
+        sql1 = """ SELECT fid FROM log_of_leaves_comment WHERE leave_id = %s AND status_ = 3 """
+        try:
+            cur = self.conn.cursor()
+            cur.execute(sql1, (leave_id , ))
+            lid = [False]
+            for x in cur:
+                lid = [True, x[0]]
+            cur.close()
+            return lid
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+    
+    def getInittialReason(self, leave_id):
+        sql1 = """ SELECT reason FROM log_of_leaves WHERE leave_id = %s AND status_ = 3 """
+        try:
+            cur = self.conn.cursor()
+            cur.execute(sql1, (leave_id , ))
+            lid = [False]
+            for x in cur:
+                lid = [True, x[0]]
+            cur.close()
+            return lid
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
     
     def checkSpecialPortal(self, user_id):
         sql1 = """ SELECT fid FROM HOD WHERE fid = %s """
@@ -436,6 +474,23 @@ class db_interface:
         try:
             cur = self.conn.cursor()
             cur.execute(sql, (emp[0],emp[1],emp[2],emp[3],emp[4],))
+            self.conn.commit()
+            cur.close()
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+    def update_log_of_leave_status(self , emp):
+        sql = """UPDATE log_of_leaves
+          SET  
+          status_ = %s,
+          reason = %s,
+          time_of_generation =%s 
+          where leave_id = %s
+            """  #here i have to change %d %d with corresponding date signifier.
+        try:
+            print("1 : ",emp)
+            cur = self.conn.cursor()
+            cur.execute(sql, (emp[0],emp[1],emp[2],emp[3],))
             self.conn.commit()
             cur.close()
         except (Exception, psycopg2.DatabaseError) as error:
