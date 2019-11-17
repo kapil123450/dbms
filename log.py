@@ -101,6 +101,53 @@ def portal(user_id):
    return render_template("Fac_port.html",data = data)
 
 #### LEAVES ###### 
+@app.route('/getResponseAccept', methods = ['POST','GET'])
+def getResponseAccept(  ):
+   leave_id = request.form['leave_id']
+   applicant_id = request.form['applicant_id']
+   print(leave_id)
+   print(applicant_id)
+   dep = psql.check_log_of_faculty_dep([applicant_id])
+   comment = request.form['comment']
+   spid = session.get('_id')
+   print("spid:",spid)
+   psql.upudate_log_leave_comment([2,comment,date.today(),spid,leave_id])
+   list_path = psql.check_path()
+   post = psql.checkSpecialPortal(spid)
+   post_new = 0
+   flag = False
+   for i in range(len(list_path)):
+      if list_path[i] == post[1] :
+         if i== len(list_path)-1:
+            flag = True
+         else :
+            post_new = list_path[i+1]
+         break;
+   if flag :
+      psql.delete_from_current_table_of_leave([leave_id])
+      psql.decrese_current_leave_in_faculty(applicant_id)  #it is like update we have to decrese leave number
+      psql.update_log_of_leave([2,leave_id,applicant_id])
+   else :
+      sp_id = []
+      if post_new in ['HOD']:
+         sp_id = psql.check_In_hod([dep])
+         print("spid:",sp_id)
+         if sp_id[0] != False:
+            spid = sp_id[1]
+      else:
+         sp_id = psql.check_In_dean([post_new])
+         if sp_id[0] != False:
+            spid = sp_id[1]
+      post_level = psql.check_fixed_level([post_new])
+      psql.update_current_leave([post_level,date.today(),leave_id])
+      psql.insert_log_leave_comment([leave_id,1,'NULL',spid,date.today(),post_level]) 
+      return redirect(url_for("home"))  
+
+   return redirect(url_for("home"))
+
+
+
+
 @app.route('/generateLeave', methods = ['POST','GET'])
 def generateLeave():
    fid = session.get('_id')
@@ -109,10 +156,25 @@ def generateLeave():
    dep = psql.check_log_of_faculty_dep([fid])
    print(check_leave)
    if check_leave[0] == True:
+      
       leave_id = psql.insert_log_of_leaves([1,reason,0,fid,date.today()]) # insert information in log_of _leave table for faculty.
       list_path = psql.check_path() #check for list of path set by admin
-      psql.insert_current_leave([leave_id,1,'NULL',0,fid,0,date.today()]) #insert information about leave in current leave table
-      i=0
+      post_level = psql.check_fixed_level([list_path[0]])
+      post = list_path[0]
+      spid = 0
+      psql.insert_current_leave([leave_id,1,'NULL',0,fid,post_level,date.today()]) #insert information about leave in current leave table
+      if post in ['HOD']:
+         sp_id = psql.check_In_hod([dep])
+         if sp_id[0] != False:
+            spid = sp_id[1]
+      else:
+         sp_id = psql.check_In_dean([post])
+         if sp_id[0] != False:
+            spid = sp_id[1]
+            
+      psql.insert_log_leave_comment([leave_id,1,'NULL',spid,date.today(),post_level]) 
+   return redirect(url_for("portal"))
+   """i=0
       true =0
       print(list_path)
       for post in list_path:
@@ -142,8 +204,6 @@ def generateLeave():
                true = 1
                continue
             else : break
-         
-      psql.delete_from_current_table_of_leave([leave_id])
       if i == len(list_path) and true == 1:
          cur_leave = check_leave[1] -1 
          psql.decrese_current_leave_in_faculty([cur_leave,fid])  #it is like update we have to decrese leave number
@@ -152,8 +212,7 @@ def generateLeave():
          psql.update_log_of_leave([0,leave_id,fid])
    else:
       print('a')
-   #else:   
-
+   #else:   """
 @app.route('/specialPortal',methods = ['POST','GET'])
 def specialPortal():
    fid = session.get('_id')
@@ -191,6 +250,7 @@ def detailsofleaveidPending(leave_id):
    data['borroe_by_applicant'] = leave_details_to_applicant[3]
    data['applicant_id'] = leave_details_to_applicant[4]
    data['leave_details_to_verifier'] = leave_details_to_verifier
+   data['leave_id'] = leave_id
    return render_template("leaveid_details_pending.html",data = data)
 ##### ADMIN #####
 @app.route('/admin',methods = ['POST','GET'])

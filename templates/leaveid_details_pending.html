@@ -40,10 +40,12 @@ Status to applicant <br>
     
 </ol>
 
-<form method="POST" action="/#">
+<form method="POST" action="/getResponseAccept">
     <h4>{{ "Comments"}}</h4>
     <br><br>
-    <textarea name="reason" rows="10" cols="100"></textarea>
+    <textarea name="comment" rows="10" cols="100"></textarea>
+    <input type="hidden" name="leave_id" value="{{ data['leave_id'] }}"/>
+    <input type="hidden" name="applicant_id" value="{{ data['applicant_id']}}"/>
     <br><br>
     <button type="submit" class="btn btn-primary">Accept and Forward</button>
     <button type="submit" class="btn btn-primary" formaction="#">Reject </button>

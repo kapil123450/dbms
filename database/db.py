@@ -336,15 +336,15 @@ class db_interface:
     
     def checkSpecialPortal(self, user_id):
         sql1 = """ SELECT fid FROM HOD WHERE fid = %s """
-        sql2 = """ SELECT fid FROM CROSS_FACULTY WHERE fid = %s """
+        sql2 = """ SELECT designation FROM CROSS_FACULTY WHERE fid = %s """
         try:
             cur = self.conn.cursor()
             cur.execute(sql1, (user_id,))
             for x in cur:
-                return [True]
+                return [True,'HOD']
             cur.execute(sql2, (user_id,))
             for x in cur:
-                return [True]
+                return [True,x[0]]
             cur.close()
             return [False]
         except (Exception, psycopg2.DatabaseError) as error:
@@ -385,7 +385,7 @@ class db_interface:
             val = []
             for x in cur :
                 val.append(x[0])
-                    
+            print(val)      
             cur.close()
             return val
         except (Exception, psycopg2.DatabaseError) as error:
@@ -431,7 +431,7 @@ class db_interface:
           SET  status_ = %s,
           comment = %s ,
           time_of_generation =%s 
-          where fid =%s and leave id = %s
+          where fid =%s and leave_id = %s
             """  #here i have to change %d %d with corresponding date signifier.
         try:
             cur = self.conn.cursor()
@@ -470,7 +470,7 @@ class db_interface:
         sql = """UPDATE log_of_leaves
           SET  status_ = %s,
           time_of_generation =%s 
-          where leave id = %s and fid = %s
+          where leave_id = %s and fid = %s
             """  #here i have to change %d %d with corresponding date signifier.
         try:
             cur = self.conn.cursor()
@@ -480,14 +480,14 @@ class db_interface:
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
 
-    def decrese_current_leave_in_faculty(self , emp):
+    def decrese_current_leave_in_faculty(self , user_id):
         sql = """UPDATE faculty
-          SET  leaves_current_year = %s 
+          SET  leaves_current_year = leaves_current_year-1 
           where  fid = %s
             """  #here i have to change %d %d with corresponding date signifier.
         try:
             cur = self.conn.cursor()
-            cur.execute(sql, (emp[0],emp[1],))
+            cur.execute(sql, (user_id,))
             self.conn.commit()
             cur.close()
         except (Exception, psycopg2.DatabaseError) as error:
