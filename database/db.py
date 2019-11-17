@@ -361,3 +361,162 @@ class db_interface:
             
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
+
+    def insert_log_of_leaves(self , emp):
+        sql = """INSERT INTO log_of_leaves(status_,reason,borrow,fid,time_of_generation)
+                VALUES(%s,%s,%s,%s,%s) RETURNING leave_id """  #here i have to change %d %d with corresponding date signifier.
+        try:
+            cur = self.conn.cursor()
+            cur.execute(sql, (emp[0],emp[1],emp[2],emp[3],emp[4],))
+            leave_id = cur.fetchone()[0]
+            self.conn.commit()
+            cur.close()
+            return leave_id
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+    def check_path(self , emp):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("""SELECT designation from Admin_path_faculty """)
+            val = []
+            for x in cur :
+                val.append(x[0])
+                    
+            cur.close()
+            return val
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+    def insert_current_leave(self , emp):
+        sql = """INSERT INTO current_leaves(leave_id,status_,comment,borrow,fid,position_level,time_of_generation)
+                VALUES(%s,%s,%s,%s,%s,%s,%s) """  #here i have to change %d %d with corresponding date signifier.
+        try:
+            cur = self.conn.cursor()
+            cur.execute(sql, (emp[0],emp[1],emp[2],emp[3],emp[4],emp[5],emp[6],))
+            leave_id = cur.fetchone()[0]
+            self.conn.commit()
+            cur.close()
+            return leave_id
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+    def check_fixed_level(self , log):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("""SELECT level_posiotion from level_table where designation = %s """,(log[0],))
+            post_level =cur.fetchone()[0]
+
+            cur.close()
+            return post_level
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+    def check_log_of_faculty_dep(self , log):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("""SELECT departement from log_of_faculty where fid = %s """,(log[0],))
+            dep =cur.fetchone()[0]
+
+            cur.close()
+            return dep
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+    def upudate_log_leave_comment(self , emp):
+        sql = """UPDATE log_of_leaves_comment
+          SET  status_ = %s,
+          comment = %s ,
+          time_of_generation =%s 
+          where fid =%s and leave id = %s
+            """  #here i have to change %d %d with corresponding date signifier.
+        try:
+            cur = self.conn.cursor()
+            cur.execute(sql, (emp[0],emp[1],emp[2],emp[3],emp[4],))
+            self.conn.commit()
+            cur.close()
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+    def insert_log_leave_comment(self , emp):
+        sql = """INSERT INTO log_of_leaves_comment(leave_id,status_,comment,fid,time_of_generation,position_level)
+                VALUES(%s,%s,%s,%s,%s,%s) """  #here i have to change %d %d with corresponding date signifier.
+        try:
+            cur = self.conn.cursor()
+            cur.execute(sql, (emp[0],emp[1],emp[2],emp[3],emp[4],emp[5],))
+            self.conn.commit()
+            cur.close()
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+    def update_current_leave(self , emp):
+        sql = """UPDATE current_leaves
+          SET  position_level = %s,
+          time_of_generation =%s 
+          where leave id = %s
+            """  #here i have to change %d %d with corresponding date signifier.
+        try:
+            cur = self.conn.cursor()
+            cur.execute(sql, (emp[0],emp[1],emp[2],))
+            self.conn.commit()
+            cur.close()
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+    def update_log_of_leave(self , emp):
+        sql = """UPDATE log_of_leaves
+          SET  status_ = %s,
+          time_of_generation =%s 
+          where leave id = %s and fid = %s
+            """  #here i have to change %d %d with corresponding date signifier.
+        try:
+            cur = self.conn.cursor()
+            cur.execute(sql, (emp[0],emp[1],emp[2],))
+            self.conn.commit()
+            cur.close()
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+    def decrese_current_leave_in_faculty(self , emp):
+        sql = """UPDATE faculty
+          SET  leaves_current_year = %s 
+          where  fid = %s
+            """  #here i have to change %d %d with corresponding date signifier.
+        try:
+            cur = self.conn.cursor()
+            cur.execute(sql, (emp[0],emp[1],))
+            self.conn.commit()
+            cur.close()
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+    def check_reaction(self):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("""SELECT comment ,status  from reaction """)
+            val = [False]
+            for x in cur :
+                val = [x[0],x[1]]
+
+            cur.close()
+            return val
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+    def check_for_leave_faculty(self, log):
+        fid = log[0]
+        try:
+            cur = self.conn.cursor()
+            cur.execute("""SELECT leaves_current_year from faculty where fid = %s """,(log[0]))
+
+            val = [False]
+            for x in cur :
+                if x[0] > 0 :
+                    val = [True]
+                    break
+            cur.close()
+            return val
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+    
