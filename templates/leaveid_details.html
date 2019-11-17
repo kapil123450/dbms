@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<br>
+Fid of applicant
+<br>
+{{data['applicant_id']}}
+<br>
+<br>
+Reason For application
+<br>
+{{data['reason']}}
+<br><br>
+Comments by concerned verifiers
+<br>
+Status to applicant <br>
+{{ data['status_shown_to_applicant'] }}
+<br>
+<br>
+<ol>
+    {% for x in data['leave_details_to_verifier'] %}
+
+    <li>
+        Faculty Id <br>
+        {{ x[0] }}
+        <br>
+        Position Level <br>
+        {{ x[1] }}
+        <br>
+        Comments <br>
+        {{ x[2] }}
+        <br>
+        Status <br>
+        {{ x[3] }}
+        <br>
+        
+    </li>
+    <br>
+
+    {% endfor %}
+    
+</ol>
+{% endblock %}

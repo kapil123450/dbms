@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <br>
+            <ol>
+                <h4>Pending Leave Ids</h4>
+                {% if data['pendingLeaveIds'][0] %}
+                {% for ids in data['pendingLeaveIds'] %}
+
+                <li>
+                    <a class="btn btn-primary" href="/detailsofleaveidPending/{{ ids }}">
+                        {{ ids }}
+                    </a>
+                </li>
+                <br>
+
+                {% endfor %}
+                {% endif %}
+            </ol>
+
+            <br><br>
+
+            <ol>
+                <h4>Accepted Leave Ids</h4>
+                {% if data['approvedLeaveIds'][0] %}
+                {% for ids in data['approvedLeaveIds'] %}
+
+                <li>
+                    <a class="btn btn-primary" href="/detailsofleaveid/{{ ids }}">
+                        {{ ids }}
+                    </a>
+                </li>
+                <br>
+
+                {% endfor %}
+                {% endif %}
+            </ol>
+            <br><br>
+            <ol>
+                <h4>Rejected Leave Ids</h4>
+                {% if data['rejectedLeaveIds'][0] %}
+                {% for ids in data['rejectedLeaveIds'] %}
+
+                <li>
+                    <a class="btn btn-primary" href="/detailsofleaveid/{{ ids }}">
+                        {{ ids }}
+                    </a>
+                </li>
+                <br>
+
+                {% endfor %}
+                {% endif %}
+            </ol>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -75,16 +75,103 @@ def failed( name  , pwd ):
 @app.route('/portal/<user_id>',methods = ['POST','GET'])  
 def portal(user_id):
    editflag = False
+   leaves = [False]
+   specialPortal = [False]
+   pendingLeave = [False]
    if not user_id:
       editflag = True
       user_id = session.get('_id')
+      if user_id :
+         leaves = psql.getLeaves(user_id)
+         specialPortal = psql.checkSpecialPortal(user_id)
+         pendingLeave = psql.checkPendingLeave(user_id)
+         print("sp:",specialPortal)
+
    if not user_id :
       return redirect(url_for('login'))
    data = my_collection.find_one({"_id": int(user_id)})
    data['editflag'] = editflag
+   if leaves[0] != False:
+      data['leaves_current_year'] = leaves[0]
+      data['leaves_next_year']    = leaves[1]
+   if pendingLeave[0] != False :
+      data['pendingLeave'] = pendingLeave[0]
+      data['pendingLeaveid'] = pendingLeave[1]
+   data['specialPortal'] = specialPortal[0]
    return render_template("Fac_port.html",data = data)
 
-##ADMIN
+#### LEAVES ###### 
+@app.route('/generateLeave', methods = ['POST','GET'])
+def generateLeave():
+   fid = session.get('_id')
+   reason = request.form['reason']
+   check_leave = psql.check_for_leave_faculty([fid]) #check whteher this faculty can avail leave or not
+   dep = psql.check_log_of_faculty_dep([fid])
+   if check_leave[0] == True:
+      leave_id = psql.insert_log_of_leaves([1,reason,0,fid,date.now()]) # insert information in log_of _leave table for faculty.
+      list_path = psql.check_path() #check for list of path set by admin
+      psql.insert_current_leave([leave_id,1,'NULL',0,fid,0,date.now()]) #insert information about leave in current leave table
+      i=0
+      true =0
+      for post in list_path:
+         i = i+1
+         true = 0
+         post_level = psql.check_fixed_level([post])  #check for post level in fixel level table
+         sp_id = []
+         if post in ['HODCSE','HODEE','HODME']:
+            sp_id = psql.check_In_hod([dep])
+            sp_id = sp_id[1]
+         else:
+            sp_id = psql.check_In_dean([post])
+            sp_id = sp_id[1]
+         psql.update_current_leave([post_level,date.now(),leave_id]) #update information in current leave table
+         psql.insert_log_leave_comment([leave_id,1,'NULL',sp_id,date.now(),post_level])   #insert first into log_of _leave and comment table ,which shows that it has gone to this proff.
+         status = psql.check_reaction()  # it return what a hod or dean has reacted on particular leav
+         while status[0] == False:
+            status = psql.check_reaction()
+         if status[0] !=False:
+            psql.upudate_log_leave_comment([status[0],status[1],date.today(),sp_id,leave_id])  #it will update status and comment of reaction of that hod or dean for that leave.
+            if status[0] == 2:
+               true = 1
+               continue
+            else : break
+         
+      psql.delete_from_current_table_of_leave([leave_id])
+      if i == len(list_path) and true == 1:
+         cur_leave = check_leave[1] -1 
+         psql.decrese_current_leave_in_faculty([cur_leave,fid])  #it is like update we have to decrese leave number
+         psql.update_log_of_leave([2,leave_id,fid])
+      else:
+         psql.update_log_of_leave([0,leave_id,fid])
+   else:
+      print('a')
+   #else:   
+
+@app.route('/specialPortal',methods = ['POST','GET'])
+def specialPortal():
+   fid = session.get('_id')
+   data = {}
+   lid = psql.getAllLeaveRequests(fid)
+   print(lid)
+   data['pendingLeaveIds'] = lid['pendingLeaveIds']
+   data['approvedLeaveIds'] = lid['approvedLeaveIds']
+   data['rejectedLeaveIds'] = lid['rejectedLeaveIds']
+   return render_template("Special_portal.html",data = data)
+
+@app.route('/detailsofleaveid/<leave_id>',methods = ['POST','GET'])
+def detailsofleaveid(leave_id):
+   fid = session.get('_id')
+   data = {}
+   leave_details_to_applicant = psql.getDetailsFromApplicant(leave_id)
+   leave_details_to_verifier = psql.getDetailsFromVerifiers(leave_id)
+   data['reason'] = leave_details_to_applicant[0]
+   data['status_shown_to_applicant'] = leave_details_to_applicant[1]
+   data['time_of_generation_applicant'] = leave_details_to_applicant[2]
+   data['borroe_by_applicant'] = leave_details_to_applicant[3]
+   data['applicant_id'] = leave_details_to_applicant[4]
+   data['leave_details_to_verifier'] = leave_details_to_verifier
+   return render_template("leaveid_details.html",data = data)
+##### ADMIN #####
 @app.route('/admin',methods = ['POST','GET'])
 def admin():
    return render_template("Admin.html")
@@ -147,6 +234,7 @@ def admin_dean(email , designation):
    else : psql.insert_dean_Table([date.today(),fid[0],designation])  #insert new hod into hod table.
    return render_template("Admin.html")
 
+####Admin #########
 @app.route('/logout')
 def logout():
    session.pop('username',None)

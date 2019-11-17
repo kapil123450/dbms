@@ -62,6 +62,35 @@
             {% if data['editflag'] %}
             <form action="/logout">
                 <button type="submit" class="btn btn-primary">Logout</button></form>
+            <br><br>
+            Leaves Remaining This Year
+            <br>
+            {{ data['leaves_current_year']}}
+            <br><br>
+            Leaves Remaining For Next Year
+            <br>
+            {{ data['leaves_next_year']}}
+            <br><br>
+            {% if not data['pendingLeave'] %}
+            <form method="POST" action="/generateLeave">
+                <h4>{{ "Reason For Leave"}}</h4>
+                <br><br>
+                <textarea name="reason" rows="10" cols="100"></textarea>
+                <br><br>
+                <button type="submit" class="btn btn-primary">Submit Application</button>
+            </form>
+            <br><br>
+            {% else %}
+            <h4> Your Pending Leave Id is :</h4>
+            <br><br>
+            <a href="#">data['pendingLeaveid']</a>
+            <br><br>
+            {% endif %}
+            {% if data['specialPortal'] %}
+            <a class="btn btn-primary" href="/specialPortal">
+                click here to check and approve pending leaves
+            </a>
+            {% endif %}
             {% endif %}
 
         </div>
