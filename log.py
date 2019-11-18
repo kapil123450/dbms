@@ -88,6 +88,7 @@ def portal(user_id):
          leaves = psql.getLeaves(user_id)
          specialPortal = psql.checkSpecialPortal(user_id)
          pendingLeave = psql.checkPendingLeave(user_id)
+         print("1 : uid : ", user_id)
          sentBackForReview = psql.checkSentBackLeaveId(user_id)
          if sentBackForReview[0] != False:
             sendBackById = psql.getsendBackById(sentBackForReview[1])
@@ -202,9 +203,16 @@ def getResponseRejected():
 def sendBackAgain():
    if request.method == "POST" :
       sendBackById = request.form['sendBackById']
-      reason = request.form['reason']
+      review = request.form['review']
       leave_id = request.form['leave_id']
-      psql.upudate_log_leave_comment([1,'NULL',date.today(),sendBackById,leave_id])
+      reason = request.form['reason']
+      print("sendId : ",sendBackById)
+      print("review : ",review)
+      print("leave_id : ",leave_id)
+      print("reason : ",reason)
+
+      psql.upudate_log_leave_comment([1," ",date.today(),sendBackById,leave_id])
+      psql.insertOrUpdateReview_in_log_of_review([leave_id,sendBackById,review])
       psql.update_log_of_leave_status([1,reason,date.today(),leave_id])
    return redirect(url_for("portal"))
 
@@ -287,6 +295,7 @@ def detailsofleaveidPending(leave_id):
    data = {}
    leave_details_to_applicant = psql.getDetailsFromApplicant(leave_id)
    leave_details_to_verifier = psql.getDetailsFromVerifiers(leave_id)
+   leave_details_review = psql.getSendBackReview([leave_id,fid])
    data['reason'] = leave_details_to_applicant[0]
    data['status_shown_to_applicant'] = leave_details_to_applicant[1]
    data['time_of_generation_applicant'] = leave_details_to_applicant[2]
@@ -295,6 +304,8 @@ def detailsofleaveidPending(leave_id):
    data['nb_current_leaves'] = leave_details_to_applicant[5]
    data['leave_details_to_verifier'] = leave_details_to_verifier
    data['leave_id'] = leave_id
+   data['leave_details_review'] = leave_details_review
+   print(leave_details_review)
    return render_template("leaveid_details_pending.html",data = data)
 ##### ADMIN #####
 @app.route('/admin',methods = ['POST','GET'])

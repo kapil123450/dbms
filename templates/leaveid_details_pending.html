@@ -45,7 +45,13 @@ Status to applicant <br>
     {% if data['borrow_by_applicant'] > 0 %}
         Applicant is borrwowing {{data['borrow_by_applicant']}} number of leaves from next year
         <br><br>
-        {% endif %} 
+    {% endif %} 
+    {% if data['leave_details_review'][0]  != -1 %}
+        Following is the review sent by applicant :
+        <br>
+        {{data['leave_details_review']}}
+        <br><br>
+    {% endif %} 
     <h4>{{ "Comments"}}</h4>
     <br><br>
     <textarea name="comment" rows="10" cols="100"></textarea>

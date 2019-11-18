@@ -70,7 +70,7 @@
             <br>
             {{ data['leaves_next_year']}}
             <br><br>
-            {% if not data['pendingLeave'] %}
+            {% if not data['pendingLeave'] and not data['sentBackForReview']  %}
             <form method="POST" action="/generateLeave">
                 <h4>{{ "Reason For Leave"}}</h4>
                 <br><br>
@@ -99,11 +99,12 @@
             <a href="detailsofleaveid/{{data['sentBackForReviewId']}}">{{data['sentBackForReviewId']}}</a>
             <br>
             <form method="POST" action="/sendBackAgain">
-                <h4>{{ " Update Reason "}}</h4>
+                <h4>{{ " Give Review  "}}</h4>
                 <br><br>
-                <textarea name="reason" rows="10" cols="100">{{data['reason']}}</textarea>
-                <input type="hidden" name="sendBackById" value="{{ data['sendBackById'] }}"/>
+                <textarea name="review" rows="10" cols="100"></textarea>
+                <input type="hidden" name="sendBackById" value="{{data['sendBackById']}}"/>
                 <input type="hidden" name="leave_id" value="{{ data['sentBackForReviewId'] }}"/>
+                <input type="hidden" name="reason" value="{{ data['reason'] }}"/>
                 <br><br>
                 <button type="submit" class="btn btn-primary">Send Back Again</button>
             </form>

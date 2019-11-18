@@ -467,12 +467,13 @@ class db_interface:
     def upudate_log_leave_comment(self , emp):
         sql = """UPDATE log_of_leaves_comment
           SET  status_ = %s,
-          comment = %s ,
+          comment = comment || %s ,
           time_of_generation =%s 
           where fid =%s and leave_id = %s
             """  #here i have to change %d %d with corresponding date signifier.
         try:
             cur = self.conn.cursor()
+            print("emp : ",emp)
             cur.execute(sql, (emp[0],emp[1],emp[2],emp[3],emp[4],))
             self.conn.commit()
             cur.close()
@@ -587,5 +588,36 @@ class db_interface:
             self.conn.commit()
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
-
+    def insertOrUpdateReview_in_log_of_review(self , log):
+        sql1 = """ SELECT leave_id , to_fid FROM log_of_review WHERE leave_id = %s AND to_fid = %s """
+        sql2 = """ INSERT INTO log_of_review(leave_id ,to_fid , review) VALUES(%s ,%s ,%s) """
+        sql3 = """ UPDATE log_of_review 
+                    SET review = review || %s 
+                    WHERE leave_id = %s AND to_fid = %s"""
+        
+        try:
+            cur = self.conn.cursor()
+            cur.execute(sql1,(log[0] ,log[1] , ))
+            leave_id = [-1]
+            for x in cur:
+                leave_id = [x[0],x[1]]
+            if leave_id[0] != -1:
+                cur.execute(sql3,(log[2],log[0],log[1],))
+            else : 
+                cur.execute(sql2 , (log[0],log[1],log[2],))
+            self.conn.commit()
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
     
+    def getSendBackReview(self, log):
+        sql = """ SELECT review FROM log_of_review WHERE leave_id = %s AND to_fid = %s """
+        try:
+            cur = self.conn.cursor()
+            cur.execute(sql,(log[0] ,log[1],))
+            lid = [-1]
+            for x in cur:
+                lid = [x[0]]
+
+            return lid
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
