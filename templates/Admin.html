@@ -16,11 +16,26 @@
             <br>
             <br>
             <br>
-            <a href = "/clearPath" > clear earlier path </a>
+            <a href = "/clearPath" > clear earlier path For Faculties </a>
             <br><br>
             <form action="/setPath" method = "POST">
                 <select name="pathmember">
                     
+                    <option value="HOD">HOD</option>
+                    <option value="A_DEAN">Associate Dean</option>
+                    <option value="DEAN">Dean</option>
+                    <option value="DIRECTOR">Director</option>
+                </select>
+                <br><br>
+                <input type="submit">
+            </form>
+            <br>
+            <br>
+            <br>
+            <a href = "/clearPathCrossFaculty" > clear earlier path For HOD and Cross Faculty </a>
+            <br><br>
+            <form action="/setPathForCrossFaculty" method = "POST">
+                <select name="pathmember"> 
                     <option value="HOD">HOD</option>
                     <option value="A_DEAN">Associate Dean</option>
                     <option value="DEAN">Dean</option>

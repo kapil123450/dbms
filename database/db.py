@@ -416,16 +416,33 @@ class db_interface:
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
 
-    def check_path(self ):
+    def check_path(self ,log ):
+        sql1 = """ SELECT fid FROM hod WHERE fid = %s"""
+        sql2 = """ SELECT fid FROM cross_faculty WHERE fid = %s"""
         try:
             cur = self.conn.cursor()
-            cur.execute("""SELECT designation from Admin_path_faculty """)
-            val = []
-            for x in cur :
-                val.append(x[0])
-            print(val)      
-            cur.close()
-            return val
+            flag = [-1]
+            li = []
+            cur.execute(sql1 , (log ,))
+            for x in cur:
+                cur.execute(""" select designation from Admin_path_hod """)
+                for x in cur:
+                    li.append(x[0])
+                cur.close()
+                return li
+            cur.execute(sql2 , (log ,))
+            for x in cur:
+                cur.execute(""" select designation from Admin_path_hod """)
+                for x in cur:
+                    li.append(x[0])
+                cur.close()
+                return li
+            else:
+                cur.execute(""" select designation from Admin_path_faculty """)
+                for x in cur:
+                    li.append(x[0])
+                cur.close()
+                return li
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
 
@@ -584,7 +601,7 @@ class db_interface:
         try:
             cur = self.conn.cursor()
             cur.execute("""DELETE FROM current_leaves where leave_id = %s """,(log[0] ,))
-
+            cur.close()
             self.conn.commit()
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
@@ -605,6 +622,7 @@ class db_interface:
                 cur.execute(sql3,(log[2],log[0],log[1],))
             else : 
                 cur.execute(sql2 , (log[0],log[1],log[2],))
+            cur.close()
             self.conn.commit()
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
@@ -617,7 +635,26 @@ class db_interface:
             lid = [-1]
             for x in cur:
                 lid = [x[0]]
-
+            cur.close()
             return lid
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+    
+    def setPathsCrf(self, log):
+        sql = """ INSERT INTO admin_path_hod (designation) VALUES (%s) """
+        try:
+            cur = self.conn.cursor()
+            cur.execute(sql,(log,))
+            
+            cur.close()
+            self.conn.commit()
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+    def clearPathrf(self):
+        try :
+            cur = self.conn.cursor()
+            cur.execute("DELETE FROM admin_path_hod");
+            cur.close()
+            self.conn.commit()
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)

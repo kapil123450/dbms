@@ -131,7 +131,7 @@ def getResponseAccept(  ):
    spid = session.get('_id')
    print("4: ",spid)
    psql.upudate_log_leave_comment([2,comment,date.today(),spid,leave_id])
-   list_path = psql.check_path()
+   list_path = psql.check_path(applicant_id)
    post = psql.checkSpecialPortal(spid)
    print("5 : " ,post)
    post_new = 0
@@ -146,6 +146,7 @@ def getResponseAccept(  ):
    
    print("6 : ",post_new)
    if flag :
+      print("new post_last",post_new)
       psql.delete_from_current_table_of_leave([leave_id])
       psql.decrese_current_leave_in_faculty([nb_current_leaves,nb_borrow_leaves,applicant_id])  #it is like update we have to decrese leave number
       psql.update_log_of_leave([2,leave_id,applicant_id])
@@ -221,6 +222,7 @@ def sendBackAgain():
 @app.route('/generateLeave', methods = ['POST','GET'])
 def generateLeave():
    fid = session.get('_id')
+
    reason = request.form['reason']
    nb_leaves = request.form['nb_leaves']
    check_leave = psql.check_for_leave_faculty([fid]) #check whteher this faculty can avail leave or not
@@ -245,7 +247,8 @@ def generateLeave():
          return redirect(url_for("portal"))
       else :
          leave_id = psql.insert_log_of_leaves([1,reason,nb_borrow,fid,date.today(),nb_current]) # insert information in log_of _leave table for faculty.
-         list_path = psql.check_path() #check for list of path set by admin
+         list_path = psql.check_path(fid) #check for list of path set by admin
+         print(list_path)
          post_level = psql.check_fixed_level([list_path[0]])
          post = list_path[0]
          spid = 0
@@ -329,6 +332,18 @@ def setPath():
    if request.method == "POST":
       pathmember  = request.form['pathmember']
       psql.setPaths(pathmember)
+   return render_template("Admin.html")
+
+@app.route('/setPathForCrossFaculty',methods = ['POST','GET'])
+def setPathForCrossFaculty():
+   if request.method == "POST":
+      pathmember  = request.form['pathmember']
+      psql.setPathsCrf(pathmember)
+   return render_template("Admin.html")
+
+@app.route('/clearPathCrossFaculty')
+def clearPathCrossFaculty():
+   psql.clearPathrf()
    return render_template("Admin.html")
 
 @app.route('/setCrossFaculty',methods = ['POST','GET'])
