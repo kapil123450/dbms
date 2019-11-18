@@ -75,7 +75,7 @@ def failed( name  , pwd ):
 @app.route('/portal/<user_id>',methods = ['POST','GET'])  
 def portal(user_id):
    editflag = False
-   leaves = [False]
+   leaves = []
    specialPortal = [False]
    pendingLeave = [False]
    sentBackForReview = [False]
@@ -96,9 +96,11 @@ def portal(user_id):
 
    if not user_id :
       return redirect(url_for('login'))
+   
    data = my_collection.find_one({"_id": int(user_id)})
    data['editflag'] = editflag
-   if leaves[0] != False:
+   if len(leaves) != 0:
+      print(leaves)
       data['leaves_current_year'] = leaves[0]
       data['leaves_next_year']    = leaves[1]
    if pendingLeave[0] != False :
@@ -119,6 +121,8 @@ def portal(user_id):
 def getResponseAccept(  ):
    leave_id = request.form['leave_id']
    applicant_id = request.form['applicant_id']
+   nb_current_leaves = request.form['nb_current_leaves']
+   nb_borrow_leaves = request.form['nb_borrow_leaves']
    print("2 : ",leave_id)
    print("3 : ",applicant_id)
    dep = psql.check_log_of_faculty_dep([applicant_id])
@@ -142,7 +146,7 @@ def getResponseAccept(  ):
    print("6 : ",post_new)
    if flag :
       psql.delete_from_current_table_of_leave([leave_id])
-      psql.decrese_current_leave_in_faculty(applicant_id)  #it is like update we have to decrese leave number
+      psql.decrese_current_leave_in_faculty([nb_current_leaves,nb_borrow_leaves,applicant_id])  #it is like update we have to decrese leave number
       psql.update_log_of_leave([2,leave_id,applicant_id])
    else :
       sp_id = []
@@ -210,37 +214,34 @@ def sendBackAgain():
 def generateLeave():
    fid = session.get('_id')
    reason = request.form['reason']
+   nb_leaves = request.form['nb_leaves']
    check_leave = psql.check_for_leave_faculty([fid]) #check whteher this faculty can avail leave or not
    dep = psql.check_log_of_faculty_dep([fid])
    print(check_leave)
-   if check_leave[0] == True:
+   nb_borrow = 0
+   nb_current = 0
+   flag = True
+   print("1 : ", check_leave)
+   if check_leave[0] == True :
+      if int(check_leave[1]) >= int(nb_leaves): 
+         nb_current = int(nb_leaves)  
+      else :
+         nb_current = check_leave[1]
+         print("2 : ", nb_current)
+         nb_borrow = int(nb_leaves) - nb_current
+         print("3 : ",nb_borrow)
+         if nb_borrow > int(check_leave[2]) :
+            flag = False
       
-      leave_id = psql.insert_log_of_leaves([1,reason,0,fid,date.today()]) # insert information in log_of _leave table for faculty.
-      list_path = psql.check_path() #check for list of path set by admin
-      post_level = psql.check_fixed_level([list_path[0]])
-      post = list_path[0]
-      spid = 0
-      psql.insert_current_leave([leave_id,1,'NULL',0,fid,post_level,date.today()]) #insert information about leave in current leave table
-      if post in ['HOD']:
-         sp_id = psql.check_In_hod([dep])
-         if sp_id[0] != False:
-            spid = sp_id[1]
-      else:
-         sp_id = psql.check_In_dean([post])
-         if sp_id[0] != False:
-            spid = sp_id[1]
-      print("1  : ", spid)
-      psql.insert_log_leave_comment([leave_id,1,'NULL',spid,date.today(),post_level]) 
-   return redirect(url_for("portal"))
-   """i=0
-      true =0
-      print(list_path)
-      for post in list_path:
-         i = i+1
-         true = 0
-         post_level = psql.check_fixed_level([post])  #check for post level in fixel level table
-         sp_id = []
-         spid = -1
+      if not flag :
+         return redirect(url_for("portal"))
+      else :
+         leave_id = psql.insert_log_of_leaves([1,reason,nb_borrow,fid,date.today(),nb_current]) # insert information in log_of _leave table for faculty.
+         list_path = psql.check_path() #check for list of path set by admin
+         post_level = psql.check_fixed_level([list_path[0]])
+         post = list_path[0]
+         spid = 0
+         psql.insert_current_leave([leave_id,1,'NULL',nb_borrow,fid,post_level,date.today()]) #insert information about leave in current leave table
          if post in ['HOD']:
             sp_id = psql.check_In_hod([dep])
             if sp_id[0] != False:
@@ -249,28 +250,11 @@ def generateLeave():
             sp_id = psql.check_In_dean([post])
             if sp_id[0] != False:
                spid = sp_id[1]
-            
-         psql.update_current_leave([post_level,date.today(),leave_id]) #update information in current leave table
-         psql.insert_log_leave_comment([leave_id,1,'NULL',spid,date.today(),post_level])   #insert first into log_of _leave and comment table ,which shows that it has gone to this proff.
-         status = psql.check_reaction()  # it return what a hod or dean has reacted on particular leav
-         print(status)
-         while status[0] == False:
-            status = psql.check_reaction()
-         if status[0] !=False:
-            psql.upudate_log_leave_comment([status[0],status[1],date.today(),spid,leave_id])  #it will update status and comment of reaction of that hod or dean for that leave.
-            if status[1] == 2:
-               true = 1
-               continue
-            else : break
-      if i == len(list_path) and true == 1:
-         cur_leave = check_leave[1] -1 
-         psql.decrese_current_leave_in_faculty([cur_leave,fid])  #it is like update we have to decrese leave number
-         psql.update_log_of_leave([2,leave_id,fid])
-      else:
-         psql.update_log_of_leave([0,leave_id,fid])
-   else:
-      print('a')
-   #else:   """
+         print("1  : ", spid)
+         psql.insert_log_leave_comment([leave_id,1,'NULL',spid,date.today(),post_level])
+
+   return redirect(url_for("portal"))
+   
 @app.route('/specialPortal',methods = ['POST','GET'])
 def specialPortal():
    fid = session.get('_id')
@@ -306,8 +290,9 @@ def detailsofleaveidPending(leave_id):
    data['reason'] = leave_details_to_applicant[0]
    data['status_shown_to_applicant'] = leave_details_to_applicant[1]
    data['time_of_generation_applicant'] = leave_details_to_applicant[2]
-   data['borroe_by_applicant'] = leave_details_to_applicant[3]
+   data['borrow_by_applicant'] = leave_details_to_applicant[3]
    data['applicant_id'] = leave_details_to_applicant[4]
+   data['nb_current_leaves'] = leave_details_to_applicant[5]
    data['leave_details_to_verifier'] = leave_details_to_verifier
    data['leave_id'] = leave_id
    return render_template("leaveid_details_pending.html",data = data)

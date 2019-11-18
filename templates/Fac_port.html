@@ -60,8 +60,7 @@
             <br>
             <br>
             {% if data['editflag'] %}
-            <form action="/logout">
-                <button type="submit" class="btn btn-primary">Logout</button></form>
+            
             <br><br>
             Leaves Remaining This Year
             <br>
@@ -76,6 +75,8 @@
                 <h4>{{ "Reason For Leave"}}</h4>
                 <br><br>
                 <textarea name="reason" rows="10" cols="100"></textarea>
+                <br><br>
+                <input type = "number" name = "nb_leaves"> Input Number of leaves </input>
                 <br><br>
                 <button type="submit" class="btn btn-primary">Submit Application</button>
             </form>

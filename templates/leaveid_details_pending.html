@@ -41,11 +41,18 @@ Status to applicant <br>
 </ol>
 
 <form method="POST" action="/getResponseAccept">
+    <br>
+    {% if data['borrow_by_applicant'] > 0 %}
+        Applicant is borrwowing {{data['borrow_by_applicant']}} number of leaves from next year
+        <br><br>
+        {% endif %} 
     <h4>{{ "Comments"}}</h4>
     <br><br>
     <textarea name="comment" rows="10" cols="100"></textarea>
     <input type="hidden" name="leave_id" value="{{ data['leave_id'] }}"/>
     <input type="hidden" name="applicant_id" value="{{ data['applicant_id']}}"/>
+    <input type="hidden" name="nb_current_leaves" value="{{ data['nb_current_leaves']}}"/>
+    <input type="hidden" name="nb_borrow_leaves" value="{{ data['borrow_by_applicant']}}"/>
     <br><br>
     <button type="submit" class="btn btn-primary">Accept and Forward</button>
     <button type="submit" class="btn btn-primary" method = "POST" formaction="/getResponseRejected">Reject </button>

@@ -290,7 +290,7 @@ class db_interface:
 
     def getDetailsFromApplicant(self, leave_id):
         li = []
-        sql = """SELECT reason , status_ , time_of_generation , borrow ,fid FROM log_of_leaves WHERE leave_id = %s"""
+        sql = """SELECT reason , status_ , time_of_generation , borrow ,fid ,nb_leaves FROM log_of_leaves WHERE leave_id = %s"""
         try:
             cur = self.conn.cursor()
             lid = [False]
@@ -298,7 +298,7 @@ class db_interface:
             li = []
             for x in cur:
                 print(x)
-                li =[x[0], x[1], x[2], x[3],x[4]]
+                li =[x[0], x[1], x[2], x[3],x[4],x[5]]
                 lid = li
             cur.close()
             print(lid)
@@ -404,11 +404,11 @@ class db_interface:
             print(error)
 
     def insert_log_of_leaves(self , emp):
-        sql = """INSERT INTO log_of_leaves(status_,reason,borrow,fid,time_of_generation)
-                VALUES(%s,%s,%s,%s,%s) RETURNING leave_id """  #here i have to change %d %d with corresponding date signifier.
+        sql = """INSERT INTO log_of_leaves(status_,reason,borrow,fid,time_of_generation,nb_leaves)
+                VALUES(%s,%s,%s,%s,%s,%s) RETURNING leave_id """  #here i have to change %d %d with corresponding date signifier.
         try:
             cur = self.conn.cursor()
-            cur.execute(sql, (emp[0],emp[1],emp[2],emp[3],emp[4],))
+            cur.execute(sql, (emp[0],emp[1],emp[2],emp[3],emp[4],emp[5],))
             leave_id = cur.fetchone()[0]
             self.conn.commit()
             cur.close()
@@ -538,12 +538,13 @@ class db_interface:
 
     def decrese_current_leave_in_faculty(self , user_id):
         sql = """UPDATE faculty
-          SET  leaves_current_year = leaves_current_year-1 
+          SET  leaves_current_year = leaves_current_year-%s,
+          leaves_next_year = leaves_next_year-%s 
           where  fid = %s
             """  #here i have to change %d %d with corresponding date signifier.
         try:
             cur = self.conn.cursor()
-            cur.execute(sql, (user_id,))
+            cur.execute(sql, (user_id[0],user_id[1],user_id[2],))
             self.conn.commit()
             cur.close()
         except (Exception, psycopg2.DatabaseError) as error:
@@ -566,12 +567,12 @@ class db_interface:
         fid = log[0]
         try:
             cur = self.conn.cursor()
-            cur.execute("""SELECT leaves_current_year from faculty where fid = %s """,(log[0] ,))
+            cur.execute("""SELECT leaves_current_year  , leaves_next_year from faculty where fid = %s """,(log[0] ,))
 
             val = [False]
             for x in cur :
-                if x[0] > 0 :
-                    val = [True,x[0]]
+                if x[0] >= 0 :
+                    val = [True,x[0],x[1]]
                     break
             cur.close()
             return val

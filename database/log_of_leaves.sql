@@ -5,6 +5,7 @@ CREATE TABLE log_of_leaves
     reason TEXT,
     borrow INTEGER,
     fid INTEGER,
+    nb_leaves INTEGER,
     time_of_generation DATE,
     FOREIGN KEY (fid) REFERENCES log_of_faculty(fid)
 );
