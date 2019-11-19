@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+
+<ol>
+        {% for x in data['leaves '] %}
+    
+        <li>
+            <a href = "/detailsofleaveid/{{x}}">{{x}}</a>
+        </li>
+        <br>
+    
+        {% endfor %}
+        
+    </ol>
+{% endblock %}

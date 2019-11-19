@@ -118,6 +118,16 @@ def portal(user_id):
    return render_template("Fac_port.html",data = data)
 
 #### LEAVES ###### 
+@app.route('/leaveRecord', methods = ['POST','GET'])
+def leaveRecord():
+   if request.method == "GET":
+      data = {}
+      fid = session.get('_id')
+      leaves  = psql.getlr(fid) 
+      data['leaves '] = leaves
+      print("data : " ,data)
+      return render_template("leaveRecord.html",data=data)
+
 @app.route('/getResponseAccept', methods = ['POST','GET'])
 def getResponseAccept(  ):
    leave_id = request.form['leave_id']
@@ -449,9 +459,34 @@ def register():
       return redirect(url_for('home'))  
    else :
       return render_template("register.html")  
-
+@app.route('/details' , methods = ['POST','GET'])
+def details():
+   my_list_fid_current,my_list_fid_prev = psql.check_log_of_faculty_for_fid()
+   data =[]
+   data1 = []
+   for fid in my_list_fid_current:
+      li = []
+      my_name = psql.check_my_name_in_employee([fid])
+      my_leave_deateils = psql.chek_details_in_log_of_leave([fid])
+      leaved_signed_by_me = psql.check_in_log_leave_comment([fid])
+      li= [my_name,my_leave_deateils,leaved_signed_by_me]
+      data.append(li)
+   
+   for fid in my_list_fid_prev:
+      li = []
+      my_name = psql.check_my_name_in_employee([fid])
+      my_leave_deateils = psql.chek_details_in_log_of_leave([fid])
+      leaved_signed_by_me = psql.check_in_log_leave_comment([fid])
+      li= [my_name,my_leave_deateils,leaved_signed_by_me]
+      data1.append(li)
+   my_List = {}
+   my_List['current'] =data
+   my_List['previous'] = data1
+   print(my_List)
+   return render_template('details.html',my_List=my_List)
 
 
 if __name__ == '__main__': 
    psql = db_interface()
    app.run(debug = True) 
+

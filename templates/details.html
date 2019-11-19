@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block content %}
+<ol>
+    <h1> Current Faculty</h1>
+        {% for x in my_List['current'] %}
+
+        <li>
+            <h4>
+                Name 
+                <br>
+                {{x[0][0]}}
+                <br>
+                <ol>
+                {% if x[1]|length > 0 %}
+                Following are the leave applied 
+                {% endif %}
+                {% for y in x[1] %}
+                <li>
+                    <a href ="/detailsofleaveid/{{y[0]}}">Leave Id {{y[0]}}</a>
+                    Status : 
+                    {% if y[1] == 0 %}
+                    <h4>Rejected</h4>
+                    {% elif y[1]== 1 %}
+                    <h4>Pending</h4>
+                    {% elif y[1]== 2 %}
+                    <h4>Accepted</h4>
+                    {% else %}
+                    <h4>Sent Back For reveiw</h4>
+                    {% endif %}
+                    Reason : {{y[2]}}
+                <br>
+                </li>
+                {% endfor %}
+                </ol>
+                <br>
+                <ol>
+                {% if x[2]|length > 0 %}
+                Following are the leaves signed
+                {% endif %}
+                {% for y in x[2] %}
+                <li>
+                        <a href ="/detailsofleaveid/{{y[0]}}">Leave Id {{y[0]}}</a>
+                        Status : 
+                        {% if y[1] == 0 %}
+                        <h4>Rejected</h4>
+                        {% elif y[1]== 1 %}
+                        <h4>Pending</h4>
+                        {% elif y[1]== 2 %}
+                        <h4>Accepted</h4>
+                        {% else %}
+                        <h4>Sent Back For reveiw</h4>
+                        {% endif %}
+                        Comment : {{y[2]}}
+                        <br>
+                        Designation : {% if y[4] == 0 %}
+                        <h4>Simple Faculty</h4>
+                        {% elif y[4]== 1 %}
+                        <h4>HOD</h4>
+                        {% elif y[4]== 2 %}
+                        <h4>Associate Dean</h4>
+                        {% elif y[4] ==3 %}
+                        <h4>Dean</h4>
+                        {% else %}
+                        Director
+                        {% endif %}
+                </li>
+                {% endfor %}
+                </ol>
+            </h4>
+            
+        </li>
+        <br>
+    
+        {% endfor %}
+        <h1>Previou s Faculty</h1>
+        {% for x in my_List['previous'] %}
+
+        <li>
+            <h4>
+                Name 
+                <br>
+                {{x[0][0]}}
+                <br>
+                <ol>
+                {% if x[1]|length > 0 %}
+                Following are the leave applied 
+                {% endif %}
+                {% for y in x[1] %}
+                <li>
+                    <a href ="/detailsofleaveid/{{y[0]}}">Leave Id {{y[0]}}</a>
+                    Status : 
+                    {% if y[1] == 0 %}
+                    <h4>Rejected</h4>
+                    {% elif y[1]== 1 %}
+                    <h4>Pending</h4>
+                    {% elif y[1]== 2 %}
+                    <h4>Accepted</h4>
+                    {% else %}
+                    <h4>Sent Back For reveiw</h4>
+                    {% endif %}
+                    Reason : {{y[2]}}
+                <br>
+                </li>
+                {% endfor %}
+                </ol>
+                <br>
+                <ol>
+                {% if x[2]|length > 0 %}
+                Following are the leaves signed
+                {% endif %}
+                {% for y in x[2] %}
+                <li>
+                        <a href ="/detailsofleaveid/{{y[0]}}">Leave Id {{y[0]}}</a>
+                        Status : 
+                        {% if y[1] == 0 %}
+                        <h4>Rejected</h4>
+                        {% elif y[1]== 1 %}
+                        <h4>Pending</h4>
+                        {% elif y[1]== 2 %}
+                        <h4>Accepted</h4>
+                        {% else %}
+                        <h4>Sent Back For reveiw</h4>
+                        {% endif %}
+                        Comment : {{y[2]}}
+                        <br>
+                        Designation : {% if y[4] == 0 %}
+                        <h4>Simple Faculty</h4>
+                        {% elif y[4]== 1 %}
+                        <h4>HOD</h4>
+                        {% elif y[4]== 2 %}
+                        <h4>Associate Dean</h4>
+                        {% elif y[4] ==3 %}
+                        <h4>Dean</h4>
+                        {% else %}
+                        Director
+                        {% endif %}
+                </li>
+                {% endfor %}
+                </ol>
+            </h4>
+            
+        </li>
+        <br>
+    
+        {% endfor %}
+        
+    </ol>
+
+    {% endblock %}

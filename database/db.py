@@ -306,6 +306,24 @@ class db_interface:
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
         
+    def getlr(self, fid):
+        li = []
+        sql = """SELECT leave_id FROM log_of_leaves WHERE fid = %s"""
+        try:
+            cur = self.conn.cursor()
+            lid = [False]
+            cur.execute(sql, (fid,))
+            li = []
+            for x in cur:
+                print(x)
+                li.append(x[0])
+                lid = li
+            cur.close()
+            print(lid)
+            return lid
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+        
     def getNamefromempl(self, fid):
         li = []
         sql = """SELECT name FROM employee WHERE facultyid = %s"""
@@ -683,5 +701,69 @@ class db_interface:
             cur.execute("DELETE FROM admin_path_hod");
             cur.close()
             self.conn.commit()
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+    def check_my_name_in_employee(self, log):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("""SELECT name from employee where facultyid = %s  """,(log[0] ,))
+
+            val = []
+            for x in cur :
+                val = [x[0]]
+
+            cur.close()
+            return val
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+    def check_log_of_faculty_for_fid(self):
+        #email = log[0]
+        sql1= """SELECT fid  from log_of_faculty where start_date_of_faculty = end_date_of_faculty """
+        sql2= """SELECT fid  from log_of_faculty where start_date_of_faculty != end_date_of_faculty """
+        try:
+            cur = self.conn.cursor()
+            cur.execute(sql1)
+            
+            val = []
+            val1 = []
+            for x in cur :
+                val.append(x[0]) 
+
+            cur.execute(sql2)
+            for x in cur:
+                val1.append(x[0])
+                
+            cur.close()
+            return val,val1
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+    def chek_details_in_log_of_leave(self, log):
+        try:
+            cur = self.conn.cursor()
+            cur.execute("""SELECT leave_id , status_ , reason , borrow ,end_date ,nb_leaves ,time_of_generation  from log_of_leaves where fid = %s  """,(log[0] ,))
+
+            val = []
+            for x in cur :
+                val.append(x)
+
+            cur.close()
+            return val
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+    
+    def check_in_log_leave_comment(self, log):
+        try :
+            cur = self.conn.cursor()
+            cur.execute("""SELECT leave_id , status_ , comment,time_of_generation,position_level from log_of_leaves_comment where fid = %s  """,(log[0] ,))
+
+            val = []
+            for x in cur :
+                val.append(x)
+
+            cur.close()
+            return val
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
