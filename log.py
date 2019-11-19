@@ -165,7 +165,7 @@ def getResponseAccept(  ):
       post_level = psql.check_fixed_level([post_new])
       print("8 : ",post_level)
       psql.update_current_leave([post_level,date.today(),leave_id])
-      psql.insert_log_leave_comment([leave_id,1,'NULL',spid,date.today(),post_level]) 
+      psql.insert_log_leave_comment([leave_id,1,' ',spid,date.today(),post_level]) 
       return redirect(url_for("specialPortal"))  
 
    return redirect(url_for("specialPortal"))
@@ -225,6 +225,8 @@ def generateLeave():
 
    reason = request.form['reason']
    nb_leaves = request.form['nb_leaves']
+   start_date = request.form['start_date']
+   end_date = request.form['end_date']
    check_leave = psql.check_for_leave_faculty([fid]) #check whteher this faculty can avail leave or not
    dep = psql.check_log_of_faculty_dep([fid])
    print(check_leave)
@@ -246,13 +248,13 @@ def generateLeave():
       if not flag :
          return redirect(url_for("portal"))
       else :
-         leave_id = psql.insert_log_of_leaves([1,reason,nb_borrow,fid,date.today(),nb_current]) # insert information in log_of _leave table for faculty.
+         leave_id = psql.insert_log_of_leaves([1,reason,nb_borrow,fid,start_date,end_date,nb_current]) # insert information in log_of _leave table for faculty.
          list_path = psql.check_path(fid) #check for list of path set by admin
          print(list_path)
          post_level = psql.check_fixed_level([list_path[0]])
          post = list_path[0]
          spid = 0
-         psql.insert_current_leave([leave_id,1,'NULL',nb_borrow,fid,post_level,date.today()]) #insert information about leave in current leave table
+         psql.insert_current_leave([leave_id,1,' ',nb_borrow,fid,post_level,date.today()]) #insert information about leave in current leave table
          if post in ['HOD']:
             sp_id = psql.check_In_hod([dep])
             if sp_id[0] != False:
@@ -262,10 +264,14 @@ def generateLeave():
             if sp_id[0] != False:
                spid = sp_id[1]
          print("1  : ", spid)
-         psql.insert_log_leave_comment([leave_id,1,'NULL',spid,date.today(),post_level])
+         psql.insert_log_leave_comment([leave_id,1,' ',spid,date.today(),post_level])
 
    return redirect(url_for("portal"))
-   
+
+@app.route('/generateLeaveApplicationPortal', methods = ['POST','GET'])
+def generateLeaveApplicationPortal():
+   return render_template("generatenewLeave.html")
+
 @app.route('/specialPortal',methods = ['POST','GET'])
 def specialPortal():
    fid = session.get('_id')
@@ -284,12 +290,22 @@ def detailsofleaveid(leave_id):
    data = {}
    leave_details_to_applicant = psql.getDetailsFromApplicant(leave_id)
    leave_details_to_verifier = psql.getDetailsFromVerifiers(leave_id)
+   print(leave_details_to_applicant)
+   print(leave_details_to_verifier)
    data['reason'] = leave_details_to_applicant[0]
    data['status_shown_to_applicant'] = leave_details_to_applicant[1]
    data['time_of_generation_applicant'] = leave_details_to_applicant[2]
    data['borroe_by_applicant'] = leave_details_to_applicant[3]
    data['applicant_id'] = leave_details_to_applicant[4]
+   data['end_date_leave'] = leave_details_to_applicant[6]
    data['leave_details_to_verifier'] = leave_details_to_verifier
+   data['name_applicant'] = psql.getNamefromempl(data['applicant_id'])
+   print(data['name_applicant'])
+   fid_ver = []
+   for x in leave_details_to_verifier:
+      fid_ver.append(psql.getNamefromempl(x[0])[0])
+   data['name_of_ver'] = fid_ver
+   print(fid_ver)
    return render_template("leaveid_details.html",data = data)
 
 @app.route('/detailsofleaveidPending/<leave_id>',methods = ['POST','GET'])
@@ -305,6 +321,8 @@ def detailsofleaveidPending(leave_id):
    data['borrow_by_applicant'] = leave_details_to_applicant[3]
    data['applicant_id'] = leave_details_to_applicant[4]
    data['nb_current_leaves'] = leave_details_to_applicant[5]
+   data['end_date_leave'] = leave_details_to_applicant[6]
+   data['name_applicant'] = psql.getNamefromempl(data['applicant_id'])
    data['leave_details_to_verifier'] = leave_details_to_verifier
    data['leave_id'] = leave_id
    data['leave_details_review'] = leave_details_review

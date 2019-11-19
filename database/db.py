@@ -290,7 +290,7 @@ class db_interface:
 
     def getDetailsFromApplicant(self, leave_id):
         li = []
-        sql = """SELECT reason , status_ , time_of_generation , borrow ,fid ,nb_leaves FROM log_of_leaves WHERE leave_id = %s"""
+        sql = """SELECT reason , status_ , time_of_generation , borrow ,fid ,nb_leaves ,end_date FROM log_of_leaves WHERE leave_id = %s"""
         try:
             cur = self.conn.cursor()
             lid = [False]
@@ -298,7 +298,24 @@ class db_interface:
             li = []
             for x in cur:
                 print(x)
-                li =[x[0], x[1], x[2], x[3],x[4],x[5]]
+                li =[x[0], x[1], x[2], x[3],x[4],x[5],x[6]]
+                lid = li
+            cur.close()
+            print(lid)
+            return lid
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+        
+    def getNamefromempl(self, fid):
+        li = []
+        sql = """SELECT name FROM employee WHERE facultyid = %s"""
+        try:
+            cur = self.conn.cursor()
+            lid = [False]
+            cur.execute(sql, (fid,))
+            li = []
+            for x in cur:
+                li =[x[0]]
                 lid = li
             cur.close()
             print(lid)
@@ -307,16 +324,26 @@ class db_interface:
             print(error)
 
     def getDetailsFromVerifiers(self, leave_id):
-        sql = """SELECT fid , position_level , comment , status_ FROM log_of_leaves_comment WHERE leave_id = %s"""
+        sql = """SELECT fid , position_level , comment , status_ , time_of_generation FROM log_of_leaves_comment WHERE leave_id = %s"""
         try:
             cur = self.conn.cursor()
             lid = [False]
             cur.execute(sql, (leave_id,))
             li = []
             for x in cur:
-                li.append([x[0], x[1], x[2], x[3]])
+                li.append([x[0], x[1], x[2], x[3],x[4]])
                 lid = li
+            lid_new = []
+            for x in lid :
+                fid = x[0]
+                print(fid)
+                cur.execute("""SELECT name FROM employee WHERE facultyid = %s""",(fid,))
+                tmp = cur.fetchone()
+                lid_new.append([x[0], x[1], x[2], x[3],x[4],tmp[0]])
+            if len(lid_new)!=0:
+                lid = lid_new
             cur.close()
+            print(lid)
             return lid
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
@@ -404,11 +431,11 @@ class db_interface:
             print(error)
 
     def insert_log_of_leaves(self , emp):
-        sql = """INSERT INTO log_of_leaves(status_,reason,borrow,fid,time_of_generation,nb_leaves)
-                VALUES(%s,%s,%s,%s,%s,%s) RETURNING leave_id """  #here i have to change %d %d with corresponding date signifier.
+        sql = """INSERT INTO log_of_leaves(status_,reason,borrow,fid,time_of_generation,end_date ,nb_leaves)
+                VALUES(%s,%s,%s,%s,%s,%s,%s) RETURNING leave_id """  #here i have to change %d %d with corresponding date signifier.
         try:
             cur = self.conn.cursor()
-            cur.execute(sql, (emp[0],emp[1],emp[2],emp[3],emp[4],emp[5],))
+            cur.execute(sql, (emp[0],emp[1],emp[2],emp[3],emp[4],emp[5],emp[6],))
             leave_id = cur.fetchone()[0]
             self.conn.commit()
             cur.close()

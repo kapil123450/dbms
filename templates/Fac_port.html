@@ -62,28 +62,24 @@
             {% if data['editflag'] %}
             
             <br><br>
-            Leaves Remaining This Year
+            <h4>Leaves Remaining This Year</h4>
             <br>
             {{ data['leaves_current_year']}}
             <br><br>
-            Leaves Remaining For Next Year
+            <h4>Leaves Remaining From Next Year</h4>
             <br>
             {{ data['leaves_next_year']}}
             <br><br>
             {% if not data['pendingLeave'] and not data['sentBackForReview']  %}
-            <form method="POST" action="/generateLeave">
-                <h4>{{ "Reason For Leave"}}</h4>
-                <br><br>
-                <textarea name="reason" rows="10" cols="100"></textarea>
-                <br><br>
-                <input type = "number" name = "nb_leaves"> Input Number of leaves </input>
-                <br><br>
-                <button type="submit" class="btn btn-primary">Submit Application</button>
-            </form>
+            <form method = 'POST' action = "generateLeaveApplicationPortal">
+                    <input type="hidden" name="pendingLeave" value="{{ data['pendingLeave'] }}"/>
+                    <input type="hidden" name="sentBackForReview" value="{{ data['sentBackForReview'] }}"/>
+                    <button type="submit" class="btn btn-primary">New Leave Application</button>
+                </form>
             <br><br>
-            {% else %}
+            {% elif not data['sentBackForReview'] %}
             <h4> Your Pending Leave Id is :</h4>
-            <br><br>
+            <br>
             <a href="/detailsofleaveid/{{data['pendingLeaveid']}}">{{data['pendingLeaveid']}}</a>
             <br><br>
             {% endif %}
@@ -94,8 +90,8 @@
             {% endif %}
             {% if data['sentBackForReview'] %}
             <br><br>
-            Check Reviews on your Leave
-            <br><br>
+            <h4>Your Leave Request is sent back for more clarification to check the comments click below </h4>
+            
             <a href="detailsofleaveid/{{data['sentBackForReviewId']}}">{{data['sentBackForReviewId']}}</a>
             <br>
             <form method="POST" action="/sendBackAgain">
@@ -113,8 +109,7 @@
 
         </div>
 
-
-
+        
 
     </div>
 </div>

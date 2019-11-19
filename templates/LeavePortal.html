@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+                <br><br>
+                Leaves Remaining This Year
+                <br>
+                {{ data['leaves_current_year']}}
+                <br><br>
+                Leaves Remaining For Next Year
+                <br>
+                {{ data['leaves_next_year']}}
+                <br><br>
+                {% if not data['pendingLeave'] and not data['sentBackForReview']  %}
+                <form method = 'POST' action = "generateLeaveApplicationPortal">
+                    <input type="hidden" name="pendingLeave" value="{{ data['pendingLeave'] }}"/>
+                    <input type="hidden" name="sentBackForReview" value="{{ data['sentBackForReview'] }}"/>
+                    <button type="submit" class="btn btn-primary">New Leave Application</button>
+                </form>
+                <br><br>
+                {% else %}
+                <h4> Your Pending Leave Id is :</h4>
+                <br><br>
+                <a href="/detailsofleaveid/{{data['pendingLeaveid']}}">{{data['pendingLeaveid']}}</a>
+                <br><br>
+                {% endif %}
+                {% if data['specialPortal']!="False" %}
+                <a class="btn btn-primary" href="/specialPortal">
+                    click here to check and approve pending leaves
+                </a>
+                {% endif %}
+                {% if data['sentBackForReview']=="True" %}
+                
+                <br><br>
+                Sent Back G
+                <a href="detailsofleaveid/{{data['sentBackForReviewId']}}">{{data['sentBackForReviewId']}}</a>
+                <br>
+                <br><br>
+                Check Reviews on your Leave
+                <br>
+                <form method="POST" action="/sendBackAgain">
+                    <h4>{{ " Give Review  "}}</h4>
+                    <br><br>
+                    <textarea name="review" rows="10" cols="100"></textarea>
+                    <input type="hidden" name="sendBackById" value="{{data['sendBackById']}}"/>
+                    <input type="hidden" name="leave_id" value="{{ data['sentBackForReviewId'] }}"/>
+                    <input type="hidden" name="reason" value="{{ data['reason'] }}"/>
+                    <br><br>
+                    <button type="submit" class="btn btn-primary">Send Back Again</button>
+                </form>
+                {% endif %}
+
+        </div>
+        </div>
+        </div>
+{% endblock %}

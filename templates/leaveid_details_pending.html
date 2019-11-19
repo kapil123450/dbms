@@ -1,36 +1,52 @@
 {% extends "base.html" %}
 {% block content %}
 <br>
-Fid of applicant
+<h4>Name of the applicant</h4>
 <br>
-{{data['applicant_id']}}
+{{data['name_applicant'][0]}}
 <br>
 <br>
-Reason For application
+<h4>Reason For application</h4>
 <br>
 {{data['reason']}}
 <br><br>
-Comments by concerned verifiers
+<h4>From {{data['time_of_generation_applicant']}} to {{data['end_date_leave']}} </h4>
 <br>
-Status to applicant <br>
-{{ data['status_shown_to_applicant'] }}
+<br>
+<h4>Status of applicant_leave</h4> <br>
+{% if data['status_shown_to_applicant'] == 0 %}
+<h4>Rejected</h4>
+{% elif data['status_shown_to_applicant']== 1 %}
+<h4>Pending</h4>
+{% elif data['status_shown_to_applicant']== 2 %}
+<h4>Accepted</h4>
+{% else %}
+<h4>Sent Back For reveiw</h4>
+{% endif %}
 <br>
 <br>
 <ol>
     {% for x in data['leave_details_to_verifier'] %}
 
     <li>
-        Faculty Id <br>
-        {{ x[0] }}
+        <h4>Name of faculty</h4>
+        <h4>{{x[5]}}</h4>
         <br>
-        Position Level <br>
-        {{ x[1] }}
+        
         <br>
-        Comments <br>
+        <h4>Comments</h4>
+        <br>
         {{ x[2] }}
         <br>
-        Status <br>
-        {{ x[3] }}
+        {% if x[3] == 0 %}
+        <h4>Rejected</h4>
+        {% elif x[3]== 1 %}
+        <h4>Pending</h4>
+        {% elif x[3]== 2 %}
+        <h4>Accepted</h4>
+        {% else %}
+        <h4>Sent Back For reveiw</h4>
+        {% endif %}
         <br>
         
     </li>
@@ -39,7 +55,6 @@ Status to applicant <br>
     {% endfor %}
     
 </ol>
-
 <form method="POST" action="/getResponseAccept">
     <br>
     {% if data['borrow_by_applicant'] > 0 %}

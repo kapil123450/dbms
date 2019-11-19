@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+                <br><br>
+                <form method="POST" action="/generateLeave">
+                    <h4>{{ "Reason For Leave"}}</h4>
+                    <br><br>
+                    <textarea name="reason" rows="10" cols="100"></textarea>
+                    <br><br>
+                    <input type = "number" name = "nb_leaves"> Input Number of leaves </input>
+                    <br><br>
+                    <input type = "date" name = "start_date" > Start date </input>
+                    <br><br>
+                    <input type = "date" name = "end_date" > End date </input>
+                    <br><br>
+                    <button type="submit" class="btn btn-primary">Submit Application</button>
+                </form>
+                </div>
+                </div>
+                </div>
+                {% endblock %}
